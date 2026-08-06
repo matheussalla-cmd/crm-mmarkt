@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M|Markt — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── TEMA ESCURO (padrão) ── */
+  :root {
+    --bg:         #0A0A0A;
+    --surface:    #111111;
+    --card:       #161616;
+    --card2:      #1C1C1C;
+    --border:     #1F1F1F;
+    --border2:    #2A2A2A;
+    --accent:     #E8FF00;
+    --accent-dim: rgba(232,255,0,0.10);
+    --accent-txt: #000000;
+    --text:       #FFFFFF;
+    --muted:      #777777;
+    --muted2:     #444444;
+    --input-bg:   #1A1A1A;
+    --danger:     #FF4444;
+    --success:    #00CC66;
+    --sidebar-w:  220px;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body:    'Inter', sans-serif;
+    --font-mono:    'JetBrains Mono', monospace;
+    --logo-dark:  block;
+    --logo-light: none;
+  }
+
+  /* ── TEMA CLARO ── */
+  [data-theme="light"] {
+    --bg:         #F4F4F5;
+    --surface:    #FFFFFF;
+    --card:       #FFFFFF;
+    --card2:      #F8F8F9;
+    --border:     #E4E4E7;
+    --border2:    #D4D4D8;
+    --accent:     #1A1A1A;
+    --accent-dim: rgba(0,0,0,0.06);
+    --accent-txt: #FFFFFF;
+    --text:       #09090B;
+    --muted:      #71717A;
+    --muted2:     #A1A1AA;
+    --input-bg:   #F4F4F5;
+    --danger:     #EF4444;
+    --success:    #22C55E;
+    --logo-dark:  none;
+    --logo-light: block;
+  }
+
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 14px; line-height: 1.5; transition: background 0.2s, color 0.2s; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
+    background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; z-index: 100; transition: background 0.2s;
+  }
+  .sidebar-logo {
+    padding: 18px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .sidebar-logo img { width: 130px; height: auto; display: block; }
+  .sidebar-logo .logo-dark  { display: var(--logo-dark); }
+  .sidebar-logo .logo-light { display: var(--logo-light); }
+  .sidebar-logo small { font-family: var(--font-body); font-weight: 500; font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  .sidebar-nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+  .nav-section { padding: 0 12px; margin-bottom: 4px; }
+  .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; color: var(--muted2); text-transform: uppercase; padding: 8px 8px 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+    border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500;
+    color: var(--muted); transition: all 0.15s; border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: var(--card2); color: var(--text); }
+  .nav-item.active { background: var(--accent-dim); color: var(--accent); }
+  [data-theme="light"] .nav-item.active { color: #1A1A1A; }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-item .badge { margin-left: auto; background: var(--accent); color: var(--accent-txt); font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 20px; }
+  [data-theme="light"] .nav-item .badge { background: #1A1A1A; color: #fff; }
+
+  .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .sidebar-footer .user { font-size: 12px; color: var(--muted); }
+  .sidebar-footer .user strong { display: block; color: var(--text); font-size: 13px; }
+
+  /* ── THEME TOGGLE ── */
+  .theme-toggle {
+    width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border2);
+    background: var(--input-bg); color: var(--muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .theme-toggle:hover { color: var(--text); border-color: var(--muted2); }
+  .theme-toggle svg { width: 16px; height: 16px; }
+
+  /* ── MAIN ── */
+  .main { margin-left: var(--sidebar-w); min-height: 100vh; }
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 32px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.2s;
+  }
+  .topbar-title { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
+  .topbar-actions { display: flex; gap: 8px; align-items: center; }
+  .content { padding: 32px; }
+
+  /* ── BOTÕES ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 18px; border-radius: 8px; font-family: var(--font-body);
+    font-size: 13px; font-weight: 500; cursor: pointer; border: none;
+    transition: all 0.15s; text-decoration: none; white-space: nowrap;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-txt); }
+  [data-theme="dark"] .btn-primary:hover { background: #f5ff4d; }
+  [data-theme="light"] .btn-primary { background: #1A1A1A; color: #fff; }
+  [data-theme="light"] .btn-primary:hover { background: #333; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border2); }
+  .btn-ghost:hover { border-color: var(--muted2); color: var(--text); }
+  .btn-danger { background: transparent; color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+  .btn-danger:hover { background: rgba(239,68,68,0.08); }
+  .btn-warning { background: transparent; color: #F59E0B; border: 1px solid rgba(245,158,11,0.3); }
+  .btn-warning:hover { background: rgba(245,158,11,0.08); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-xs { padding: 4px 10px; font-size: 11px; }
+  .btn svg { width: 14px; height: 14px; }
+
+  /* ── CARDS ── */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; transition: background 0.2s; }
+  .card-header { padding: 18px 24px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .card-title { font-family: var(--font-display); font-weight: 700; font-size: 15px; }
+  .card-body { padding: 20px 24px; }
+
+  /* ── INPUTS ── */
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.3px; }
+  .field input, .field select, .field textarea {
+    width: 100%; background: var(--input-bg); border: 1px solid var(--border2);
+    color: var(--text); border-radius: 8px; padding: 9px 13px;
+    font-family: var(--font-body); font-size: 13px; outline: none; transition: border-color 0.15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+  .field textarea { resize: vertical; min-height: 76px; }
+  .field select option { background: var(--surface); }
+  .input-group { position: relative; }
+  .input-group .prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 12px; pointer-events: none; }
+  .input-group input { padding-left: 28px; }
+
+  /* ── GRID DE CLIENTES ── */
+  .clients-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .client-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; cursor: pointer; transition: all 0.2s; }
+  .client-card:hover { border-color: var(--border2); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+  .client-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+  .client-avatar { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 16px; }
+  [data-theme="light"] .client-avatar { color: #1A1A1A; }
+  .client-status { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; }
+  .status-ativo   { background: rgba(34,197,94,0.12);  color: var(--success); }
+  .status-pausado { background: rgba(239,68,68,0.10);  color: var(--danger); }
+  .status-prospecto { background: var(--accent-dim); color: var(--accent); }
+  [data-theme="light"] .status-prospecto { color: #1A1A1A; }
+  .client-name { font-family: var(--font-display); font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .client-nicho { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .client-meta { display: flex; gap: 16px; }
+  .client-meta-item { font-size: 11px; color: var(--muted); }
+  .client-meta-item strong { display: block; font-size: 13px; font-weight: 600; color: var(--text); font-family: var(--font-mono); }
+
+  /* ── TABELA ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 13px 16px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--accent-dim); }
+
+  /* ── PDM ESTRUTURA ── */
+  .grupo-block {
+    border: 1px solid var(--border2); border-radius: 12px; margin-bottom: 16px; overflow: hidden;
+  }
+  .grupo-header {
+    display: grid; grid-template-columns: 1fr 160px 36px;
+    gap: 10px; align-items: center; padding: 14px 16px;
+    background: var(--card2); border-bottom: 1px solid var(--border);
+  }
+  .grupo-header input {
+    background: var(--input-bg); border: 1px solid var(--border2); color: var(--text);
+    border-radius: 8px; padding: 8px 12px; font-family: var(--font-display); font-weight: 700;
+    font-size: 14px; outline: none; width: 100%; transition: border-color 0.15s;
+  }
+  .grupo-header input:focus { border-color: var(--accent); }
+  .grupo-header input::placeholder { color: var(--muted2); font-weight: 500; }
+  .grupo-verba-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .grupo-verba-total { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--accent); }
+  [data-theme="light"] .grupo-verba-total { color: #1A1A1A; }
+
+  .campanhas-container { padding: 12px 16px; }
+  .campanha-cols-header {
+    display: grid; grid-template-columns: 1fr 130px 60px 130px 36px;
+    gap: 8px; padding: 0 0 8px 0; margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .campanha-cols-header span { font-size: 10px; font-weight: 600; color: var(--muted2); letter-spacing: 0.8px; text-transform: uppercase; }
+  .campanha-row {
+    display: grid; grid-template-columns: 1fr 130px 60px 130px 36px;
+    gap: 8px; align-items: center; margin-bottom: 8px;
+  }
+  .campanha-row input, .campanha-row select {
+    background: var(--input-bg); border: 1px solid var(--border2); color: var(--text);
+    border-radius: 7px; padding: 8px 10px; font-family: var(--font-body); font-size: 12px;
+    outline: none; width: 100%; transition: border-color 0.15s;
+  }
+  .campanha-row input:focus, .campanha-row select:focus { border-color: var(--accent); }
+  .campanha-row select option { background: var(--surface); }
+  .campanha-pct { font-family: var(--font-mono); font-size: 12px; color: var(--muted); text-align: center; }
+  .add-campanha-btn {
+    display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500;
+    color: var(--muted); cursor: pointer; background: none; border: none; padding: 6px 0;
+    transition: color 0.15s;
+  }
+  .add-campanha-btn:hover { color: var(--text); }
+
+  /* ── TOTALS BAR ── */
+  .totals-bar { display: flex; gap: 24px; padding: 14px 18px; background: var(--accent-dim); border: 1px solid var(--border2); border-radius: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .total-item { font-size: 12px; color: var(--muted); }
+  .total-item strong { display: block; font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--accent); }
+  [data-theme="light"] .total-item strong { color: #1A1A1A; }
+
+  /* ── METAS ── */
+  .meta-row { display: grid; grid-template-columns: 1fr 160px 120px 36px; gap: 10px; align-items: center; margin-bottom: 10px; }
+  .meta-row input, .meta-row select { background: var(--input-bg); border: 1px solid var(--border2); color: var(--text); border-radius: 8px; padding: 9px 12px; font-family: var(--font-body); font-size: 13px; outline: none; width: 100%; transition: border-color 0.15s; }
+  .meta-row input:focus, .meta-row select:focus { border-color: var(--accent); }
+
+  /* ── UPLOAD ── */
+  .upload-zone { border: 2px dashed var(--border2); border-radius: 12px; padding: 36px; text-align: center; cursor: pointer; transition: all 0.2s; }
+  .upload-zone:hover, .upload-zone.dragover { border-color: var(--accent); background: var(--accent-dim); }
+  .upload-zone svg { width: 32px; height: 32px; color: var(--muted); margin-bottom: 10px; }
+  .upload-zone p { font-size: 13px; color: var(--muted); }
+  .pdf-list { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .pdf-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--input-bg); border: 1px solid var(--border2); border-radius: 8px; }
+  .pdf-item-name { flex: 1; font-size: 13px; }
+  .pdf-item-size { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+
+  /* ── LINK BOX ── */
+  .link-box { display: flex; align-items: center; gap: 12px; padding: 13px 16px; background: var(--input-bg); border: 1px solid var(--border2); border-radius: 10px; }
+  .link-box code { flex: 1; font-family: var(--font-mono); font-size: 12px; color: var(--accent); word-break: break-all; }
+  [data-theme="light"] .link-box code { color: #1A1A1A; }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+  .tab { padding: 10px 16px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; user-select: none; }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  [data-theme="light"] .tab.active { color: #1A1A1A; border-bottom-color: #1A1A1A; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── STATS ── */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .stat-label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .stat-value { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--text); }
+  .stat-value.accent { color: var(--accent); }
+  [data-theme="light"] .stat-value.accent { color: #1A1A1A; }
+  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* ── EMPTY ── */
+  .empty { text-align: center; padding: 56px 32px; }
+  .empty svg { width: 44px; height: 44px; color: var(--muted2); margin-bottom: 14px; }
+  .empty h3 { font-family: var(--font-display); font-size: 16px; margin-bottom: 8px; }
+  .empty p { font-size: 13px; color: var(--muted); }
+
+  /* ── TOAST ── */
+  .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+  .toast { padding: 12px 18px; border-radius: 10px; font-size: 13px; font-weight: 500; animation: slide-in 0.25s ease; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  .toast-success { background: var(--card); border: 1px solid rgba(34,197,94,0.4); color: var(--success); }
+  .toast-error   { background: var(--card); border: 1px solid rgba(239,68,68,0.4); color: var(--danger); }
+  .toast-info    { background: var(--card); border: 1px solid var(--border2); color: var(--text); }
+  @keyframes slide-in { from { transform: translateX(40px); opacity: 0; } }
+
+  /* ── MODAL ── */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .overlay.hidden { display: none; }
+  .modal { background: var(--card); border: 1px solid var(--border2); border-radius: 16px; width: 100%; max-width: 640px; max-height: 92vh; overflow-y: auto; }
+  .modal-lg { max-width: 820px; }
+  .modal-header { padding: 22px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-family: var(--font-display); font-weight: 700; font-size: 17px; }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+  .btn-icon { background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px; line-height: 1; font-size: 18px; }
+  .btn-icon:hover { color: var(--text); }
+
+  /* ── HISTÓRICO PDM ── */
+  .pdm-version-card {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; background: var(--card2); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 10px;
+  }
+  .pdm-version-info strong { font-size: 14px; font-weight: 600; }
+  .pdm-version-info span { font-size: 12px; color: var(--muted); display: block; margin-top: 2px; font-family: var(--font-mono); }
+  .pdm-version-badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+  .badge-current { background: rgba(34,197,94,0.12); color: var(--success); }
+  .badge-historico { background: var(--accent-dim); color: var(--muted); }
+
+  /* ── MISC ── */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .tag { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
+  .tag-meta     { background: rgba(41,128,185,0.18); color: #5dade2; }
+  .tag-google   { background: rgba(39,174,96,0.15);  color: #58d68d; }
+  .tag-tiktok   { background: rgba(155,89,182,0.18); color: #bb8fce; }
+  .tag-linkedin { background: rgba(52,152,219,0.15); color: #7fb3d3; }
+  .tag-youtube  { background: rgba(239,68,68,0.15);  color: #f87171; }
+  .tag-outro    { background: var(--accent-dim);     color: var(--muted); }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  @media (max-width: 900px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .clients-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="Logo_MMarkt.png"       class="logo-dark"  alt="M|Markt">
+    <img src="Logo_MMarkt_Preto.png" class="logo-light" alt="M|Markt">
+    <small>Painel Administrativo</small>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-label">Visão geral</div>
+      <button class="nav-item active" onclick="navigate('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Clientes</div>
+      <button class="nav-item" onclick="navigate('clientes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75M21 21v-2a4 4 0 0 0-3-3.85"/></svg>
+        Todos os clientes
+        <span class="badge" id="badge-clientes">0</span>
+      </button>
+      <button class="nav-item" onclick="navigate('novo-cliente')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+        Novo cliente
+      </button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Plano de mídia</div>
+      <button class="nav-item" onclick="navigate('pdm')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Editor de PDM
+      </button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Documentos</div>
+      <button class="nav-item" onclick="navigate('briefings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+        Briefings
+      </button>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user">
+      <strong>Matheus Muniz</strong>
+      M|Markt Estratégico
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+      <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <header class="topbar">
+    <span class="topbar-title" id="topbar-title">Dashboard</span>
+    <div class="topbar-actions" id="topbar-actions"></div>
+  </header>
+  <div class="content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Clientes ativos</div><div class="stat-value accent" id="stat-ativos">0</div><div class="stat-sub">em gestão</div></div>
+        <div class="stat-card"><div class="stat-label">Total clientes</div><div class="stat-value" id="stat-total">0</div><div class="stat-sub">cadastrados</div></div>
+        <div class="stat-card"><div class="stat-label">PDMs gerados</div><div class="stat-value" id="stat-pdms">0</div><div class="stat-sub">planos de mídia</div></div>
+        <div class="stat-card"><div class="stat-label">Briefings</div><div class="stat-value" id="stat-briefings">0</div><div class="stat-sub">documentos</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Clientes recentes</span><button class="btn btn-ghost btn-sm" onclick="navigate('clientes')">Ver todos</button></div>
+        <div class="card-body" style="padding:0"><div class="table-wrap"><table>
+          <thead><tr><th>Cliente</th><th>Nicho</th><th>Status</th><th>PDM</th><th></th></tr></thead>
+          <tbody id="dashboard-table-body"><tr><td colspan="5"><div class="empty" style="padding:36px"><p>Nenhum cliente cadastrado ainda.</p></div></td></tr></tbody>
+        </table></div></div>
+      </div>
+    </div>
+
+    <!-- ── CLIENTES ── -->
+    <div class="page" id="page-clientes"><div id="clients-grid-container"></div></div>
+
+    <!-- ── NOVO / EDITAR CLIENTE ── -->
+    <div class="page" id="page-novo-cliente">
+      <div style="max-width:700px">
+        <div class="card">
+          <div class="card-header"><span class="card-title" id="form-cliente-title">Dados do cliente</span></div>
+          <div class="card-body">
+            <input type="hidden" id="nc-id">
+            <div class="form-row">
+              <div class="field"><label>Nome / Empresa *</label><input type="text" id="nc-nome" placeholder="Ex: Clínica Bela Forma"></div>
+              <div class="field"><label>Nicho / Segmento *</label><input type="text" id="nc-nicho" placeholder="Ex: Estética, Imóveis..."></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label>Responsável</label><input type="text" id="nc-responsavel" placeholder="Nome do contato"></div>
+              <div class="field"><label>WhatsApp</label><div class="input-group"><span class="prefix">+55</span><input type="text" id="nc-whatsapp" placeholder="11 9 9999-9999"></div></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label>E-mail</label><input type="email" id="nc-email" placeholder="contato@empresa.com"></div>
+              <div class="field"><label>Status</label><select id="nc-status"><option value="prospecto">Prospecto</option><option value="ativo">Ativo</option><option value="pausado">Pausado</option></select></div>
+            </div>
+            <div class="field"><label>Observações internas</label><textarea id="nc-obs" placeholder="Notas internas sobre o cliente..."></textarea></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><span class="card-title">Briefing (PDF)</span></div>
+          <div class="card-body">
+            <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <p><strong>Clique para selecionar</strong> ou arraste o PDF aqui</p>
+              <p style="margin-top:4px;font-size:12px">Somente arquivos PDF</p>
+            </div>
+            <input type="file" id="file-input" accept=".pdf" style="display:none" onchange="handleFile(this)">
+            <div class="pdf-list" id="pdf-list"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button class="btn btn-primary" onclick="saveClient()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <span id="btn-save-client-label">Salvar cliente</span>
+          </button>
+          <button class="btn btn-ghost" onclick="navigate('clientes')">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PDM EDITOR ── -->
+    <div class="page" id="page-pdm">
+      <div style="max-width:860px">
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><span class="card-title">Cliente & Período</span></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field"><label>Selecionar cliente *</label><select id="pdm-cliente"></select></div>
+              <div class="field"><label>Objetivo geral</label><input type="text" id="pdm-objetivo" placeholder="Ex: Geração de leads para clínica estética, zona sul SP"></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label>Início do plano</label><input type="date" id="pdm-inicio"></div>
+              <div class="field"><label>Fim do plano</label><input type="date" id="pdm-fim"></div>
+            </div>
+            <!-- histórico de versões -->
+            <div id="pdm-historico-wrap" style="display:none">
+              <div class="divider"></div>
+              <div style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px">Histórico de versões</div>
+              <div id="pdm-historico-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" data-tab="tab-grupos" onclick="switchTab(this)">Canais & Campanhas</div>
+          <div class="tab" data-tab="tab-metas" onclick="switchTab(this)">Metas</div>
+        </div>
+
+        <!-- TAB GRUPOS -->
+        <div class="tab-content active" id="tab-grupos">
+          <div class="totals-bar" id="totals-bar">
+            <div class="total-item"><strong id="total-verba">R$ 0,00</strong>Verba total</div>
+            <div class="total-item"><strong id="total-grupos">0</strong>Grupos</div>
+            <div class="total-item"><strong id="total-campanhas">0</strong>Campanhas</div>
+          </div>
+          <div id="grupos-container"></div>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:4px" onclick="addGrupo()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+            Adicionar grupo de campanhas
+          </button>
+        </div>
+
+        <!-- TAB METAS -->
+        <div class="tab-content" id="tab-metas">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Metas por canal</span><button class="btn btn-ghost btn-sm" onclick="addMeta()">+ Meta</button></div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:1fr 160px 120px 36px;gap:10px;margin-bottom:10px">
+                <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:0.8px;text-transform:uppercase">CANAL / CAMPANHA</span>
+                <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:0.8px;text-transform:uppercase">MÉTRICA</span>
+                <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:0.8px;text-transform:uppercase">META</span>
+                <span></span>
+              </div>
+              <div id="metas-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="savePDM(false)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+            Salvar PDM
+          </button>
+          <button class="btn btn-ghost" onclick="duplicatePDM()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Duplicar PDM
+          </button>
+          <button class="btn btn-warning" onclick="prorrogarPDM()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
+            Prorrogar plano
+          </button>
+          <button class="btn btn-ghost" onclick="generateLink()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Gerar link
+          </button>
+        </div>
+
+        <div id="link-result" style="display:none;margin-top:16px">
+          <div class="link-box"><code id="link-url"></code><button class="btn btn-ghost btn-sm" onclick="copyLink()">Copiar</button></div>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px">⚠️ Link visual pendente — será ativado na próxima etapa (página pública).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BRIEFINGS ── -->
+    <div class="page" id="page-briefings"><div id="briefings-container"></div></div>
+
+    <!-- ── DETALHE CLIENTE ── -->
+    <div class="page" id="page-cliente-detalhe"><div id="detalhe-container"></div></div>
+
+  </div>
+</main>
+
+<!-- MODAL PRORROGAR -->
+<div class="overlay hidden" id="modal-prorrogar">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header"><span class="modal-title">Prorrogar plano</span><button class="btn-icon" onclick="closeModal('modal-prorrogar')">✕</button></div>
+    <div class="modal-body">
+      <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Uma nova versão do PDM será criada com as novas datas. A versão atual ficará salva no histórico.</p>
+      <div class="form-row">
+        <div class="field"><label>Nova data de início</label><input type="date" id="prorr-inicio"></div>
+        <div class="field"><label>Nova data de fim</label><input type="date" id="prorr-fim"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-prorrogar')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmProrrogar()">Criar nova versão</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR DELETE -->
+<div class="overlay hidden" id="modal-confirm">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header"><span class="modal-title">Confirmar exclusão</span><button class="btn-icon" onclick="closeModal('modal-confirm')">✕</button></div>
+    <div class="modal-body"><p style="color:var(--muted)">Esta ação não pode ser desfeita. Deseja remover este cliente e todos os seus dados?</p></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-confirm')">Cancelar</button>
+      <button class="btn btn-danger" id="btn-confirm-delete">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════
+const DB = {
+  _d: null,
+  load()  { return JSON.parse(localStorage.getItem('mmarkt_db') || '{"clients":[],"pdms":[]}'); },
+  save(d) { localStorage.setItem('mmarkt_db', JSON.stringify(d)); },
+  get()   { return this._d || (this._d = this.load()); },
+  persist(){ this.save(this._d); }
+};
+
+// ═══════════════════════════════════════════════════
+// TEMA
+// ═══════════════════════════════════════════════════
+(function() {
+  const saved = localStorage.getItem('mmarkt_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateThemeIcons(saved);
+})();
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('mmarkt_theme', next);
+  updateThemeIcons(next);
+}
+function updateThemeIcons(theme) {
+  document.getElementById('icon-sun').style.display  = theme === 'light' ? 'block' : 'none';
+  document.getElementById('icon-moon').style.display = theme === 'dark'  ? 'block' : 'none';
+}
+
+// ═══════════════════════════════════════════════════
+// NAVEGAÇÃO
+// ═══════════════════════════════════════════════════
+const PAGE_TITLES = {
+  dashboard: 'Dashboard', clientes: 'Clientes', 'novo-cliente': 'Novo cliente',
+  pdm: 'Editor de PDM', briefings: 'Briefings', 'cliente-detalhe': 'Detalhe do cliente'
+};
+
+function navigate(page, param) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if ((n.getAttribute('onclick')||'').includes("'"+page+"'")) n.classList.add('active');
+  });
+  document.getElementById('topbar-title').textContent = PAGE_TITLES[page] || page;
+  const actions = document.getElementById('topbar-actions');
+  actions.innerHTML = '';
+  if (page === 'dashboard')           renderDashboard();
+  if (page === 'clientes')            renderClientes();
+  if (page === 'novo-cliente')        setupClientForm(param);   // param = clientId para edição
+  if (page === 'pdm')                 renderPDMPage(param);
+  if (page === 'briefings')           renderBriefings();
+  if (page === 'cliente-detalhe' && param) renderDetalhe(param);
+
+  if (page === 'clientes')
+    actions.innerHTML = '<button class="btn btn-primary btn-sm" onclick="navigate(\'novo-cliente\')">+ Novo cliente</button>';
+  if (page === 'pdm')
+    actions.innerHTML = '<button class="btn btn-ghost btn-sm" onclick="navigate(\'clientes\')">← Voltar</button>';
+  if (page === 'cliente-detalhe')
+    actions.innerHTML = '<button class="btn btn-ghost btn-sm" onclick="navigate(\'clientes\')">← Voltar</button>';
+  updateBadge();
+}
+
+function updateBadge() { document.getElementById('badge-clientes').textContent = DB.get().clients.length; }
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════
+function renderDashboard() {
+  const db = DB.get();
+  const ativos = db.clients.filter(c => c.status === 'ativo').length;
+  // conta só PDMs "current"
+  const pdmsCount = db.pdms.filter(p => p.isCurrent !== false).length;
+  const briefs = db.clients.filter(c => c.briefingName).length;
+  document.getElementById('stat-ativos').textContent = ativos;
+  document.getElementById('stat-total').textContent  = db.clients.length;
+  document.getElementById('stat-pdms').textContent   = pdmsCount;
+  document.getElementById('stat-briefings').textContent = briefs;
+
+  const tbody = document.getElementById('dashboard-table-body');
+  if (!db.clients.length) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty" style="padding:36px"><p>Nenhum cliente cadastrado ainda.</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = [...db.clients].reverse().slice(0,8).map(c => {
+    const pdm = db.pdms.find(p => p.clientId === c.id && p.isCurrent !== false);
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div class="client-avatar" style="width:32px;height:32px;font-size:12px">${initials(c.nome)}</div>
+        <div><div style="font-weight:600">${c.nome}</div><div style="font-size:12px;color:var(--muted)">${c.email||'—'}</div></div>
+      </div></td>
+      <td style="color:var(--muted)">${c.nicho}</td>
+      <td><span class="client-status status-${c.status}">${cap(c.status)}</span></td>
+      <td>${pdm?'<span style="color:var(--success);font-size:12px">✓ Criado</span>':'<span style="color:var(--muted2);font-size:12px">—</span>'}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="navigate('cliente-detalhe','${c.id}')">Ver</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// CLIENTES
+// ═══════════════════════════════════════════════════
+function renderClientes() {
+  const db = DB.get();
+  const container = document.getElementById('clients-grid-container');
+  if (!db.clients.length) {
+    container.innerHTML = `<div class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+      <h3>Nenhum cliente ainda</h3><p>Cadastre seu primeiro cliente para começar.</p>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="navigate('novo-cliente')">+ Novo cliente</button></div>`;
+    return;
+  }
+  container.innerHTML = '<div class="clients-grid">' + db.clients.map(c => {
+    const pdm = db.pdms.find(p => p.clientId === c.id && p.isCurrent !== false);
+    const tv  = pdm ? totalVerbaGrupos(pdm.grupos||[]) : 0;
+    return `<div class="client-card" onclick="navigate('cliente-detalhe','${c.id}')">
+      <div class="client-card-top">
+        <div class="client-avatar">${initials(c.nome)}</div>
+        <span class="client-status status-${c.status}">${cap(c.status)}</span>
+      </div>
+      <div class="client-name">${c.nome}</div>
+      <div class="client-nicho">${c.nicho}</div>
+      <div class="client-meta">
+        <div class="client-meta-item"><strong>${pdm?'R$ '+fmtBRL(tv):'—'}</strong>Verba mensal</div>
+        <div class="client-meta-item"><strong>${pdm?(pdm.grupos||[]).length:'—'}</strong>Grupos</div>
+        <div class="client-meta-item"><strong>${c.briefingName?'✓':'—'}</strong>Briefing</div>
+      </div>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+// ═══════════════════════════════════════════════════
+// FORMULÁRIO CLIENTE (novo + editar)
+// ═══════════════════════════════════════════════════
+let selectedFile = null;
+let editingClientId = null;
+
+function setupClientForm(clientId) {
+  editingClientId = clientId || null;
+  selectedFile = null;
+  document.getElementById('pdf-list').innerHTML = '';
+  document.getElementById('file-input').value = '';
+
+  if (clientId) {
+    // Modo edição
+    document.getElementById('form-cliente-title').textContent = 'Editar cliente';
+    document.getElementById('btn-save-client-label').textContent = 'Salvar alterações';
+    const c = DB.get().clients.find(x => x.id === clientId);
+    if (!c) return;
+    document.getElementById('nc-id').value          = c.id;
+    document.getElementById('nc-nome').value        = c.nome;
+    document.getElementById('nc-nicho').value       = c.nicho;
+    document.getElementById('nc-responsavel').value = c.responsavel || '';
+    document.getElementById('nc-whatsapp').value    = c.whatsapp || '';
+    document.getElementById('nc-email').value       = c.email || '';
+    document.getElementById('nc-status').value      = c.status;
+    document.getElementById('nc-obs').value         = c.obs || '';
+    if (c.briefingName) {
+      document.getElementById('pdf-list').innerHTML = `
+        <div class="pdf-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          <span class="pdf-item-name">${c.briefingName}</span>
+          <span class="pdf-item-size">já salvo</span>
+          <button class="btn btn-ghost btn-sm" onclick="removeSavedBriefing('${c.id}')">Remover</button>
+        </div>`;
+    }
+  } else {
+    document.getElementById('form-cliente-title').textContent = 'Dados do cliente';
+    document.getElementById('btn-save-client-label').textContent = 'Salvar cliente';
+    document.getElementById('nc-id').value = '';
+    ['nc-nome','nc-nicho','nc-responsavel','nc-whatsapp','nc-email','nc-obs'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('nc-status').value = 'prospecto';
+  }
+}
+
+function removeSavedBriefing(clientId) {
+  const db = DB.get();
+  const c = db.clients.find(x => x.id === clientId);
+  if (c) { c.briefingName = null; c.briefingData = null; DB.persist(); }
+  document.getElementById('pdf-list').innerHTML = '';
+}
+
+function handleFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.type !== 'application/pdf') { toast('Selecione apenas arquivos PDF.','error'); return; }
+  selectedFile = file;
+  const reader = new FileReader();
+  reader.onload = e => { selectedFile._data = e.target.result; };
+  reader.readAsDataURL(file);
+  document.getElementById('pdf-list').innerHTML = `
+    <div class="pdf-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      <span class="pdf-item-name">${file.name}</span>
+      <span class="pdf-item-size">${(file.size/1024).toFixed(0)} KB</span>
+      <button class="btn btn-ghost btn-sm" onclick="selectedFile=null;document.getElementById('pdf-list').innerHTML='';document.getElementById('file-input').value=''">Remover</button>
+    </div>`;
+}
+
+// drag & drop
+const upZone = document.getElementById('upload-zone');
+upZone.addEventListener('dragover', e => { e.preventDefault(); upZone.classList.add('dragover'); });
+upZone.addEventListener('dragleave', () => upZone.classList.remove('dragover'));
+upZone.addEventListener('drop', e => {
+  e.preventDefault(); upZone.classList.remove('dragover');
+  const f = e.dataTransfer.files[0];
+  if (f) { const dt = new DataTransfer(); dt.items.add(f); document.getElementById('file-input').files = dt.files; handleFile(document.getElementById('file-input')); }
+});
+
+function saveClient() {
+  const nome  = document.getElementById('nc-nome').value.trim();
+  const nicho = document.getElementById('nc-nicho').value.trim();
+  if (!nome || !nicho) { toast('Preencha nome e nicho.','error'); return; }
+  const db = DB.get();
+
+  if (editingClientId) {
+    // Edição
+    const idx = db.clients.findIndex(c => c.id === editingClientId);
+    if (idx < 0) return;
+    const existing = db.clients[idx];
+    db.clients[idx] = {
+      ...existing, nome, nicho,
+      responsavel: document.getElementById('nc-responsavel').value.trim(),
+      whatsapp:    document.getElementById('nc-whatsapp').value.trim(),
+      email:       document.getElementById('nc-email').value.trim(),
+      status:      document.getElementById('nc-status').value,
+      obs:         document.getElementById('nc-obs').value.trim(),
+      briefingName: selectedFile ? selectedFile.name : existing.briefingName,
+      briefingData: selectedFile ? selectedFile._data : existing.briefingData,
+    };
+    DB.persist();
+    toast('Cliente atualizado!','success');
+  } else {
+    // Novo
+    db.clients.push({
+      id: uid(), nome, nicho,
+      responsavel: document.getElementById('nc-responsavel').value.trim(),
+      whatsapp:    document.getElementById('nc-whatsapp').value.trim(),
+      email:       document.getElementById('nc-email').value.trim(),
+      status:      document.getElementById('nc-status').value,
+      obs:         document.getElementById('nc-obs').value.trim(),
+      briefingName: selectedFile ? selectedFile.name : null,
+      briefingData: selectedFile ? selectedFile._data : null,
+      createdAt: new Date().toISOString(),
+    });
+    DB.persist();
+    toast('Cliente salvo!','success');
+  }
+  navigate('clientes');
+}
+
+// ═══════════════════════════════════════════════════
+// DETALHE DO CLIENTE
+// ═══════════════════════════════════════════════════
+let deleteTargetId = null;
+
+function renderDetalhe(id) {
+  const db  = DB.get();
+  const c   = db.clients.find(x => x.id === id);
+  if (!c) return;
+  const pdm = db.pdms.find(p => p.clientId === id && p.isCurrent !== false);
+
+  const actions = document.getElementById('topbar-actions');
+  actions.innerHTML = `
+    <button class="btn btn-ghost btn-sm" onclick="navigate('novo-cliente','${id}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Editar cliente
+    </button>
+    <button class="btn btn-ghost btn-sm" onclick="navigate('pdm','${id}')">
+      ${pdm ? 'Editar PDM' : '+ Criar PDM'}
+    </button>
+    <button class="btn btn-danger btn-sm" onclick="confirmDelete('${id}')">Excluir</button>
+    <button class="btn btn-ghost btn-sm" onclick="navigate('clientes')">← Voltar</button>`;
+
+  document.getElementById('detalhe-container').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:940px">
+      <div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Informações</span><span class="client-status status-${c.status}">${cap(c.status)}</span></div>
+          <div class="card-body">
+            <table style="width:100%">
+              ${row('Empresa', c.nome)} ${row('Nicho', c.nicho)}
+              ${row('Responsável', c.responsavel||'—')} ${row('WhatsApp', c.whatsapp?'+55 '+c.whatsapp:'—')}
+              ${row('E-mail', c.email||'—')} ${row('Cadastrado', fmtDate(c.createdAt))}
+            </table>
+            ${c.obs?`<div class="divider"></div><p style="font-size:13px;color:var(--muted)">${c.obs}</p>`:''}
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><span class="card-title">Briefing</span></div>
+          <div class="card-body">
+            ${c.briefingName?`<div class="pdf-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+              <span class="pdf-item-name">${c.briefingName}</span>
+              <button class="btn btn-ghost btn-sm" onclick="downloadBriefing('${c.id}')">Baixar</button>
+            </div>`:'<p style="color:var(--muted);font-size:13px">Nenhum briefing enviado.</p>'}
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Plano de mídia</span></div>
+          <div class="card-body">
+            ${pdm ? renderPDMSummary(pdm, id) : `<div class="empty" style="padding:24px">
+              <p style="color:var(--muted)">PDM não criado.</p>
+              <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="navigate('pdm','${id}')">Criar PDM</button>
+            </div>`}
+          </div>
+        </div>
+        ${renderHistoricoCard(id)}
+      </div>
+    </div>`;
+}
+
+function renderHistoricoCard(clientId) {
+  const db  = DB.get();
+  const hist = db.pdms.filter(p => p.clientId === clientId && p.isCurrent === false);
+  if (!hist.length) return '';
+  return `<div class="card" style="margin-top:16px">
+    <div class="card-header"><span class="card-title">Histórico de versões</span></div>
+    <div class="card-body">
+      ${hist.map(p => `<div class="pdm-version-card">
+        <div class="pdm-version-info">
+          <strong>${p.objetivo||'PDM sem título'}</strong>
+          <span>${fmtDateShort(p.inicio)} → ${fmtDateShort(p.fim)}</span>
+        </div>
+        <span class="pdm-version-badge badge-historico">Histórico</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderPDMSummary(pdm, clientId) {
+  const grupos = pdm.grupos || [];
+  const total  = totalVerbaGrupos(grupos);
+  const PTAG   = {meta:'tag-meta',google:'tag-google',tiktok:'tag-tiktok',linkedin:'tag-linkedin',youtube:'tag-youtube'};
+  let html = `<div class="totals-bar" style="margin-bottom:16px">
+    <div class="total-item"><strong>R$ ${fmtBRL(total)}</strong>Verba total</div>
+    <div class="total-item"><strong>${grupos.length}</strong>Grupos</div>
+  </div>`;
+  grupos.forEach(g => {
+    html += `<div style="margin-bottom:12px">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:13px;margin-bottom:6px">${g.titulo||'Sem título'}</div>
+      <table style="width:100%"><tbody>`;
+    (g.campanhas||[]).forEach(cam => {
+      const pct = total > 0 ? Math.round((+cam.verba/total)*100) : 0;
+      const tagClass = PTAG[(cam.plataforma||'').toLowerCase()] || 'tag-outro';
+      html += `<tr>
+        <td style="padding:4px 0;font-size:12px">${cam.nome||'—'}</td>
+        <td><span class="tag ${tagClass}">${cam.plataforma||'—'}</span></td>
+        <td style="font-family:var(--font-mono);font-size:12px;text-align:right">R$ ${fmtBRL(+cam.verba)}</td>
+        <td style="color:var(--muted);font-size:12px;text-align:right;padding-left:8px">${pct}%</td>
+      </tr>`;
+    });
+    html += '</tbody></table></div>';
+  });
+  if (pdm.link) html += `<div class="link-box" style="margin-top:12px"><code>${pdm.link}</code><button class="btn btn-ghost btn-sm" onclick="copyLinkDirect('${pdm.link}')">Copiar</button></div>`;
+  return html;
+}
+
+function row(label, value) {
+  return `<tr><td style="color:var(--muted);font-size:12px;padding:6px 0;width:38%">${label}</td><td style="font-size:13px;padding:6px 0">${value}</td></tr>`;
+}
+
+function downloadBriefing(id) {
+  const c = DB.get().clients.find(x => x.id === id);
+  if (!c||!c.briefingData) { toast('PDF não disponível.','error'); return; }
+  const a = document.createElement('a'); a.href = c.briefingData; a.download = c.briefingName; a.click();
+}
+
+function confirmDelete(id) {
+  deleteTargetId = id;
+  document.getElementById('modal-confirm').classList.remove('hidden');
+}
+document.getElementById('btn-confirm-delete').onclick = () => {
+  if (!deleteTargetId) return;
+  const db = DB.get();
+  db.clients = db.clients.filter(c => c.id !== deleteTargetId);
+  db.pdms    = db.pdms.filter(p => p.clientId !== deleteTargetId);
+  DB.persist();
+  closeModal('modal-confirm');
+  toast('Cliente removido.','success');
+  navigate('clientes');
+};
+
+// ═══════════════════════════════════════════════════
+// PDM EDITOR
+// ═══════════════════════════════════════════════════
+let grupoCount = 0;
+
+function renderPDMPage(clientId) {
+  const db = DB.get();
+  // popular select de clientes
+  const sel = document.getElementById('pdm-cliente');
+  sel.innerHTML = '<option value="">— selecione —</option>' +
+    db.clients.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+
+  // resetar
+  grupoCount = 0;
+  document.getElementById('grupos-container').innerHTML = '';
+  document.getElementById('metas-container').innerHTML = '';
+  document.getElementById('link-result').style.display = 'none';
+  document.getElementById('pdm-objetivo').value = '';
+  document.getElementById('pdm-inicio').value = '';
+  document.getElementById('pdm-fim').value = '';
+  document.getElementById('pdm-historico-wrap').style.display = 'none';
+
+  if (clientId) {
+    sel.value = clientId;
+    const pdm = db.pdms.find(p => p.clientId === clientId && p.isCurrent !== false);
+    if (pdm) {
+      loadPDMIntoEditor(pdm, clientId);
+    } else {
+      addGrupo();
+    }
+  } else {
+    addGrupo();
+  }
+  // atualiza select listener
+  sel.onchange = () => {
+    const cid = sel.value;
+    if (!cid) return;
+    const pdm = db.pdms.find(p => p.clientId === cid && p.isCurrent !== false);
+    if (pdm) loadPDMIntoEditor(pdm, cid);
+    else { grupoCount = 0; document.getElementById('grupos-container').innerHTML = ''; document.getElementById('metas-container').innerHTML = ''; addGrupo(); }
+    renderHistoricoInEditor(cid);
+  };
+  updateTotals();
+}
+
+function loadPDMIntoEditor(pdm, clientId) {
+  document.getElementById('pdm-objetivo').value = pdm.objetivo||'';
+  document.getElementById('pdm-inicio').value   = pdm.inicio||'';
+  document.getElementById('pdm-fim').value      = pdm.fim||'';
+  grupoCount = 0;
+  document.getElementById('grupos-container').innerHTML = '';
+  document.getElementById('metas-container').innerHTML = '';
+  (pdm.grupos||[]).forEach(g => addGrupo(g));
+  (pdm.metas||[]).forEach(m => addMeta(m));
+  if (pdm.link) { document.getElementById('link-result').style.display='block'; document.getElementById('link-url').textContent=pdm.link; }
+  renderHistoricoInEditor(clientId);
+  updateTotals();
+}
+
+function renderHistoricoInEditor(clientId) {
+  const db   = DB.get();
+  const hist = db.pdms.filter(p => p.clientId === clientId && p.isCurrent === false);
+  const wrap = document.getElementById('pdm-historico-wrap');
+  if (!hist.length) { wrap.style.display='none'; return; }
+  wrap.style.display = 'block';
+  document.getElementById('pdm-historico-list').innerHTML = hist.map(p => `
+    <div class="pdm-version-card">
+      <div class="pdm-version-info">
+        <strong>${p.objetivo||'PDM sem título'}</strong>
+        <span>${fmtDateShort(p.inicio)} → ${fmtDateShort(p.fim)} &nbsp;·&nbsp; R$ ${fmtBRL(totalVerbaGrupos(p.grupos||[]))}</span>
+      </div>
+      <span class="pdm-version-badge badge-historico">Histórico</span>
+    </div>`).join('');
+}
+
+// ── GRUPOS ──
+const PLATAFORMAS = ['Meta','Google','TikTok','LinkedIn','YouTube','Pinterest','Kwai','Outro'];
+
+function addGrupo(data) {
+  grupoCount++;
+  const gi = grupoCount;
+  const div = document.createElement('div');
+  div.className = 'grupo-block';
+  div.id = 'grupo-' + gi;
+  div.innerHTML = `
+    <div class="grupo-header">
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:4px">Título do grupo</div>
+        <input type="text" placeholder="Ex: Captação de leads" value="${data?.titulo||''}" oninput="updateTotals()">
+      </div>
+      <div>
+        <div class="grupo-verba-label">Verba do grupo</div>
+        <div class="grupo-verba-total" id="grupo-vt-${gi}">R$ 0,00</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="color:var(--danger);padding:8px" onclick="removeGrupo(${gi})" title="Remover grupo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+      </button>
+    </div>
+    <div class="campanhas-container">
+      <div class="campanha-cols-header">
+        <span>Campanha</span><span>Verba (R$)</span><span>%&nbsp;total</span><span>Plataforma</span><span></span>
+      </div>
+      <div class="campanhas-list" id="campanhas-${gi}"></div>
+      <button class="add-campanha-btn" onclick="addCampanha(${gi})">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+        Adicionar campanha
+      </button>
+    </div>`;
+  document.getElementById('grupos-container').appendChild(div);
+  if (data?.campanhas?.length) {
+    data.campanhas.forEach(cam => addCampanha(gi, cam));
+  } else {
+    addCampanha(gi);
+  }
+  updateTotals();
+}
+
+function removeGrupo(gi) {
+  document.getElementById('grupo-'+gi).remove();
+  updateTotals();
+}
+
+let campanhaCount = 0;
+function addCampanha(gi, data) {
+  campanhaCount++;
+  const ci = campanhaCount;
+  const list = document.getElementById('campanhas-'+gi);
+  const div = document.createElement('div');
+  div.className = 'campanha-row';
+  div.id = 'campanha-'+ci;
+  div.dataset.grupo = gi;
+  div.innerHTML = `
+    <input type="text" placeholder="Nome da campanha" value="${data?.nome||''}" oninput="updateTotals()">
+    <input type="number" placeholder="0,00" min="0" step="100" value="${data?.verba||''}" oninput="updateTotals()">
+    <span class="campanha-pct" id="cpct-${ci}">0%</span>
+    <select>${PLATAFORMAS.map(p=>`<option${data?.plataforma===p?' selected':''}>${p}</option>`).join('')}</select>
+    <button class="btn btn-ghost" style="padding:7px;color:var(--danger)" onclick="removeCampanha(${ci})" title="Remover">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+    </button>`;
+  list.appendChild(div);
+  updateTotals();
+}
+
+function removeCampanha(ci) {
+  document.getElementById('campanha-'+ci).remove();
+  updateTotals();
+}
+
+function updateTotals() {
+  const grupos = document.querySelectorAll('.grupo-block');
+  let grandTotal = 0, totalCamp = 0;
+
+  // primeiro: calcular grand total
+  grupos.forEach(g => {
+    g.querySelectorAll('.campanha-row').forEach(row => {
+      const v = parseFloat(row.querySelectorAll('input')[1].value)||0;
+      grandTotal += v;
+      totalCamp++;
+    });
+  });
+
+  // segundo: atualizar % e verba por grupo
+  grupos.forEach(g => {
+    let grupoTotal = 0;
+    g.querySelectorAll('.campanha-row').forEach(row => {
+      const v = parseFloat(row.querySelectorAll('input')[1].value)||0;
+      grupoTotal += v;
+      const ci = row.id.split('-')[1];
+      const pctEl = document.getElementById('cpct-'+ci);
+      if (pctEl) pctEl.textContent = grandTotal > 0 ? Math.round((v/grandTotal)*100)+'%' : '0%';
+    });
+    const gi = g.id.split('-')[1];
+    const vtEl = document.getElementById('grupo-vt-'+gi);
+    if (vtEl) vtEl.textContent = 'R$ '+fmtBRL(grupoTotal);
+  });
+
+  document.getElementById('total-verba').textContent    = 'R$ '+fmtBRL(grandTotal);
+  document.getElementById('total-grupos').textContent   = grupos.length;
+  document.getElementById('total-campanhas').textContent = totalCamp;
+}
+
+// ── METAS ──
+const METRICAS = ['CPL','CPA','ROAS','CTR','CPC','CPM','Leads','Impressões','Cliques','Vendas','Alcance'];
+let metaCount = 0;
+function addMeta(data) {
+  metaCount++;
+  const i = metaCount;
+  const div = document.createElement('div');
+  div.className = 'meta-row';
+  div.id = 'meta-'+i;
+  div.innerHTML = `
+    <input type="text" placeholder="Ex: Meta Ads – Captação de leads" value="${data?.canal||''}">
+    <select>${METRICAS.map(m=>`<option${data?.metrica===m?' selected':''}>${m}</option>`).join('')}</select>
+    <input type="text" placeholder="Ex: R$ 25 / 200 leads" value="${data?.valor||''}">
+    <button class="btn btn-ghost" style="padding:7px;color:var(--danger)" onclick="removeMeta(${i})">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+    </button>`;
+  document.getElementById('metas-container').appendChild(div);
+}
+function removeMeta(i) { document.getElementById('meta-'+i).remove(); }
+
+// ── COLETA DOS DADOS DO EDITOR ──
+function collectPDMData() {
+  const clientId = document.getElementById('pdm-cliente').value;
+  if (!clientId) { toast('Selecione um cliente.','error'); return null; }
+
+  const grupos = [];
+  document.querySelectorAll('.grupo-block').forEach(g => {
+    const titulo = g.querySelector('input[type=text]').value;
+    const campanhas = [];
+    g.querySelectorAll('.campanha-row').forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      const sel    = row.querySelector('select');
+      campanhas.push({ nome: inputs[0].value, verba: inputs[1].value, plataforma: sel.value });
+    });
+    grupos.push({ titulo, campanhas });
+  });
+
+  const metas = [];
+  document.querySelectorAll('.meta-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const sel    = row.querySelector('select');
+    metas.push({ canal: inputs[0].value, metrica: sel.value, valor: inputs[1].value });
+  });
+
+  return {
+    clientId,
+    objetivo: document.getElementById('pdm-objetivo').value,
+    inicio:   document.getElementById('pdm-inicio').value,
+    fim:      document.getElementById('pdm-fim').value,
+    grupos, metas
+  };
+}
+
+function savePDM(silent) {
+  const data = collectPDMData();
+  if (!data) return null;
+  const db = DB.get();
+  const idx = db.pdms.findIndex(p => p.clientId === data.clientId && p.isCurrent !== false);
+  if (idx >= 0) {
+    data.link = db.pdms[idx].link || null;
+    data.isCurrent = true;
+    db.pdms[idx] = { ...db.pdms[idx], ...data };
+  } else {
+    data.id = uid(); data.isCurrent = true;
+    db.pdms.push(data);
+  }
+  DB.persist();
+  if (!silent) toast('PDM salvo!','success');
+  return data;
+}
+
+function duplicatePDM() {
+  const data = collectPDMData();
+  if (!data) return;
+  savePDM(true);
+  // carrega uma cópia limpa (sem link, sem id, sem histórico)
+  const copy = JSON.parse(JSON.stringify(data));
+  copy.objetivo += ' (cópia)';
+  copy.inicio = ''; copy.fim = '';
+  copy.link = null;
+  // injeta no editor
+  document.getElementById('pdm-objetivo').value = copy.objetivo;
+  document.getElementById('pdm-inicio').value = '';
+  document.getElementById('pdm-fim').value = '';
+  grupoCount = 0; campanhaCount = 0;
+  document.getElementById('grupos-container').innerHTML = '';
+  document.getElementById('metas-container').innerHTML = '';
+  copy.grupos.forEach(g => addGrupo(g));
+  copy.metas.forEach(m => addMeta(m));
+  document.getElementById('link-result').style.display = 'none';
+  updateTotals();
+  toast('PDM duplicado — defina as datas e salve.','info');
+}
+
+function prorrogarPDM() {
+  const clientId = document.getElementById('pdm-cliente').value;
+  if (!clientId) { toast('Selecione um cliente.','error'); return; }
+  // sugerir datas próximo mês
+  const today = new Date();
+  const m1 = new Date(today.getFullYear(), today.getMonth()+1, 1);
+  const m2 = new Date(today.getFullYear(), today.getMonth()+2, 0);
+  document.getElementById('prorr-inicio').value = m1.toISOString().slice(0,10);
+  document.getElementById('prorr-fim').value    = m2.toISOString().slice(0,10);
+  document.getElementById('modal-prorrogar').classList.remove('hidden');
+}
+
+function confirmProrrogar() {
+  const novoInicio = document.getElementById('prorr-inicio').value;
+  const novoFim    = document.getElementById('prorr-fim').value;
+  if (!novoInicio||!novoFim) { toast('Defina as duas datas.','error'); return; }
+
+  const data = collectPDMData();
+  if (!data) return;
+
+  const db = DB.get();
+  // marcar PDM atual como histórico
+  const idx = db.pdms.findIndex(p => p.clientId === data.clientId && p.isCurrent !== false);
+  if (idx >= 0) db.pdms[idx].isCurrent = false;
+
+  // criar nova versão
+  const nova = JSON.parse(JSON.stringify(data));
+  nova.id        = uid();
+  nova.inicio    = novoInicio;
+  nova.fim       = novoFim;
+  nova.isCurrent = true;
+  nova.link      = null;
+  db.pdms.push(nova);
+  DB.persist();
+
+  closeModal('modal-prorrogar');
+  // recarregar editor com nova versão
+  loadPDMIntoEditor(nova, data.clientId);
+  document.getElementById('pdm-inicio').value = novoInicio;
+  document.getElementById('pdm-fim').value    = novoFim;
+  toast('Nova versão criada! Versão anterior salva no histórico.','success');
+}
+
+function generateLink() {
+  const data = savePDM(true);
+  if (!data) return;
+  const db = DB.get();
+  const client = db.clients.find(c => c.id === data.clientId);
+  const slug = slugify(client.nome) + '-' + data.clientId.slice(0,6);
+  const link = `https://mmarkt.com.br/pdm/${slug}`;
+  const idx = db.pdms.findIndex(p => p.clientId === data.clientId && p.isCurrent !== false);
+  if (idx >= 0) db.pdms[idx].link = link;
+  DB.persist();
+  document.getElementById('link-result').style.display = 'block';
+  document.getElementById('link-url').textContent = link;
+  toast('Link gerado!','success');
+}
+
+function copyLink() { navigator.clipboard.writeText(document.getElementById('link-url').textContent); toast('Link copiado!','success'); }
+function copyLinkDirect(url) { navigator.clipboard.writeText(url); toast('Link copiado!','success'); }
+
+// ═══════════════════════════════════════════════════
+// BRIEFINGS PAGE
+// ═══════════════════════════════════════════════════
+function renderBriefings() {
+  const db = DB.get();
+  const list = db.clients.filter(c => c.briefingName);
+  const container = document.getElementById('briefings-container');
+  if (!list.length) {
+    container.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><h3>Nenhum briefing ainda</h3><p>Suba o PDF ao cadastrar ou editar um cliente.</p></div>`;
+    return;
+  }
+  container.innerHTML = `<div class="card"><div class="card-body" style="padding:0"><div class="table-wrap"><table>
+    <thead><tr><th>Cliente</th><th>Arquivo</th><th>Status</th><th style="text-align:right"></th></tr></thead>
+    <tbody>${list.map(c=>`<tr>
+      <td><div style="font-weight:600">${c.nome}</div><div style="font-size:12px;color:var(--muted)">${c.nicho}</div></td>
+      <td style="font-size:13px">${c.briefingName}</td>
+      <td><span class="client-status status-${c.status}">${cap(c.status)}</span></td>
+      <td style="text-align:right"><button class="btn btn-ghost btn-sm" onclick="downloadBriefing('${c.id}')">Baixar PDF</button></td>
+    </tr>`).join('')}</tbody>
+  </table></div></div></div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════
+function switchTab(el) {
+  const tabId = el.getAttribute('data-tab');
+  el.closest('.page, body').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.add('hidden'); }));
+
+// ═══════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════
+function uid()     { return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function initials(n){ return n.trim().split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
+function cap(s)    { return s?s[0].toUpperCase()+s.slice(1):''; }
+function fmtBRL(n) { return Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtDate(iso){ return iso?new Date(iso).toLocaleDateString('pt-BR'):'—'; }
+function fmtDateShort(iso){ if(!iso)return'—'; const d=new Date(iso+'T12:00:00'); return d.toLocaleDateString('pt-BR',{month:'short',year:'numeric'}); }
+function slugify(str){ return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function totalVerbaGrupos(grupos){ return grupos.reduce((s,g)=>(g.campanhas||[]).reduce((ss,c)=>ss+(+c.verba||0),s),0); }
+
+function toast(msg, type='success') {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `<span>${type==='success'?'✓':type==='error'?'✕':'ℹ'}</span> ${msg}`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>el.remove(),3500);
+}
+
+// ── INIT ──
+renderDashboard();
+updateBadge();
+</script>
+</body>
+</html>
