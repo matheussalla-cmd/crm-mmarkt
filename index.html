@@ -2,7 +2,14 @@
 <html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M|Markt">
+<meta name="theme-color" content="#0A0A0A" id="meta-theme-color">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>M|Markt — Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -309,7 +316,95 @@ tr:hover td{background:var(--accent-dim);}
 .divider{height:1px;background:var(--border);margin:18px 0;}
 .page{display:none;}
 .page.active{display:block;}
-@media(max-width:900px){.stats-row{grid-template-columns:1fr 1fr;}.fin-stats{grid-template-columns:1fr 1fr;}.clients-grid{grid-template-columns:1fr;}.camp-row{grid-template-columns:1fr 1fr;}.pgto-row{grid-template-columns:1fr 1fr;}}
+/* ── TABLET ── */
+@media(max-width:900px){
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .fin-stats{grid-template-columns:1fr 1fr;}
+  .clients-grid{grid-template-columns:1fr;}
+  .camp-row{grid-template-columns:1fr 1fr;}
+  .pgto-row{grid-template-columns:1fr 1fr;}
+}
+
+/* ── MOBILE ── */
+.mob-tabbar{display:none;}
+@media(max-width:640px){
+  /* Esconder sidebar desktop */
+  .sidebar{display:none;}
+  /* Main ocupa tudo */
+  .main{margin-left:0;padding-bottom:70px;}
+  /* Topbar mobile */
+  .topbar{padding:0 16px;height:52px;}
+  .topbar-title{font-size:15px;}
+  .topbar-actions .btn-sm{padding:5px 10px;font-size:11px;}
+  .content{padding:16px;}
+  /* Stats empilhados */
+  .stats-row{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .fin-stats{grid-template-columns:1fr 1fr;gap:10px;}
+  .stat-card{padding:14px;}
+  .stat-value{font-size:20px;}
+  /* Clients grid */
+  .clients-grid{grid-template-columns:1fr;}
+  /* Card headers */
+  .card-header{padding:14px 16px 12px;flex-wrap:wrap;gap:6px;}
+  .card-body{padding:14px 16px;}
+  /* Form rows viram 1 coluna */
+  .form-row,.form-row-3{grid-template-columns:1fr;}
+  /* Tabelas viram cards mobile */
+  .mob-card-row{display:block;padding:14px 16px;border-bottom:1px solid var(--border);}
+  .mob-card-row:last-child{border-bottom:none;}
+  .mob-card-row-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .mob-card-row-body{display:flex;flex-wrap:wrap;gap:8px;}
+  .mob-card-row-item{font-size:11px;color:var(--muted);}
+  .mob-card-row-item strong{display:block;font-size:13px;color:var(--text);font-weight:600;}
+  /* Pagamento linha mobile */
+  .pgto-row{display:block;padding:14px 16px;border-bottom:1px solid var(--border);}
+  .pgto-row:hover{background:var(--accent-dim);}
+  .pgto-row-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .pgto-row-bottom{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  /* Modais */
+  .modal{max-width:100%!important;border-radius:16px 16px 0 0;margin-top:auto;}
+  .overlay{align-items:flex-end;padding:0;}
+  /* PDM editor - esconder no mobile */
+  .mob-desktop-only{display:none!important;}
+  .mob-desktop-msg{display:flex!important;}
+  /* Upload zone menor */
+  .upload-zone{padding:24px;}
+  /* Totals bar scroll */
+  .totals-bar{overflow-x:auto;flex-wrap:nowrap;}
+  /* Login box */
+  .login-box{width:calc(100vw - 32px);padding:28px 24px;}
+  /* Botões topbar menores */
+  .topbar-actions{gap:4px;}
+  /* Tab bar mobile */
+  .mob-tabbar{
+    display:flex;position:fixed;bottom:0;left:0;right:0;
+    background:var(--surface);border-top:1px solid var(--border);
+    z-index:150;padding-bottom:env(safe-area-inset-bottom);
+  }
+  .mob-tab{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:10px 4px 8px;gap:3px;cursor:pointer;border:none;background:none;
+    color:var(--muted);font-size:10px;font-weight:500;transition:color .15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .mob-tab svg{width:20px;height:20px;}
+  .mob-tab.active{color:var(--accent);}
+  [data-theme="light"] .mob-tab.active{color:#1A1A1A;}
+  .mob-tab .mob-badge{
+    position:absolute;top:6px;background:var(--danger);color:#fff;
+    font-size:9px;font-weight:700;padding:1px 4px;border-radius:10px;margin-left:10px;
+  }
+  .mob-tab-wrap{position:relative;display:flex;align-items:center;justify-content:center;}
+  /* Fin stats mobile */
+  .fin-stat{padding:14px;}
+  .fin-stat-value{font-size:18px;}
+  /* Grupo accordion mobile */
+  .grupo-acc-header{padding:10px 14px;}
+  /* Detalhe grid -> 1 coluna */
+  #detalhe-wrap > div{grid-template-columns:1fr!important;}
+  /* Dashboard table -> esconder colunas extras */
+  .dash-col-hide{display:none;}
+}
 </style>
 </head>
 <body>
@@ -407,7 +502,7 @@ tr:hover td{background:var(--accent-dim);}
       <div class="card">
         <div class="card-header"><span class="card-title">Clientes recentes</span><button class="btn btn-ghost btn-sm" onclick="navigate('clientes')">Ver todos</button></div>
         <div class="card-body" style="padding:0"><div class="table-wrap"><table>
-          <thead><tr><th>Cliente</th><th>Nicho</th><th>Status</th><th>Verba mensal</th><th>PDM</th><th></th></tr></thead>
+          <thead><tr><th>Cliente</th><th class="dash-col-hide">Nicho</th><th>Status</th><th class="dash-col-hide">Verba mensal</th><th class="dash-col-hide">PDM</th><th></th></tr></thead>
           <tbody id="dashboard-tbody"></tbody>
         </table></div></div>
       </div>
@@ -624,10 +719,16 @@ tr:hover td{background:var(--accent-dim);}
                 <div style="font-size:12px;color:var(--muted)">dados no sistema agora</div>
               </div>
             </div>
-            <button class="btn btn-primary" onclick="exportarDados()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Exportar backup (.json)
-            </button>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn btn-primary" onclick="exportarDados()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Exportar backup (.json)
+              </button>
+              <button class="btn btn-ghost" id="btn-install-pwa" onclick="instalarPWA()" style="display:none">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v13M5 9l7 7 7-7"/><path d="M5 20h14"/></svg>
+                Instalar app no celular
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1738,8 +1839,175 @@ function limparDados(){
   toast('Dados apagados.','info');
 }
 
+
+// ═══════════════════════════════════════════════════
+// MOBILE
+// ═══════════════════════════════════════════════════
+function isMobile(){return window.innerWidth<=640;}
+
+function setMobTab(page){
+  document.querySelectorAll('.mob-tab').forEach(t=>t.classList.remove('active'));
+  const el=document.getElementById('mobtab-'+page);
+  if(el)el.classList.add('active');
+}
+
+// Interceptar navigate para mobile
+const _origNavigate=navigate;
+window.navigate=function(page,param){
+  _origNavigate(page,param);
+  if(isMobile()){
+    setMobTab(page);
+    // PDM editor: esconder e mostrar msg
+    if(page==='pdm'){
+      document.getElementById('page-pdm').style.display='none';
+      document.getElementById('mob-pdm-msg').style.display='flex';
+    } else {
+      document.getElementById('mob-pdm-msg').style.display='none';
+    }
+    // Esconder tab bar em sub-pages (detalhe, novo cliente)
+    const hideTabs=['novo-cliente','cliente-detalhe'];
+    document.getElementById('mob-tabbar').style.display=hideTabs.includes(page)?'none':'flex';
+  }
+};
+
+// Atualizar badge mobile de clientes
+const _origUpdateBadge=updateBadge;
+window.updateBadge=function(){
+  _origUpdateBadge();
+  const n=DB.get().clients.length;
+  const mob=document.getElementById('mob-badge-cl');
+  if(mob){mob.textContent=n;mob.style.display=n>0?'inline':'none';}
+};
+
+// Badge atrasados mobile
+const _origAtualizarBadge=atualizarBadgeAtrasados;
+window.atualizarBadgeAtrasados=function(){
+  _origAtualizarBadge();
+  const db=DB.get();
+  const hoje=new Date();
+  const ano=hoje.getFullYear(),mes=hoje.getMonth()+1;
+  let atrasados=0;
+  db.clients.filter(c=>c.honorario>0).forEach(c=>{
+    const st=getPgtoStatus(c.id,ano,mes);
+    if(!st.pago){
+      const dia=c.diaPgto||1;
+      const venc=new Date(ano,mes-1,dia);
+      if(Math.round((venc-hoje)/(1000*60*60*24))<0)atrasados++;
+    }
+  });
+  const mob=document.getElementById('mob-badge-fin');
+  if(mob)mob.style.display=atrasados>0?'inline':'none';
+};
+
+// Sync theme-color com tema
+function syncThemeColor(){
+  const t=document.documentElement.getAttribute('data-theme');
+  const el=document.getElementById('meta-theme-color');
+  if(el)el.content=t==='light'?'#FFFFFF':'#0A0A0A';
+}
+const _origToggleTheme=toggleTheme;
+window.toggleTheme=function(){_origToggleTheme();syncThemeColor();};
+syncThemeColor();
+
+// Financeiro mobile: substituir table por cards
+function renderFinanceiroMobile(){
+  if(!isMobile())return;
+  const rows=document.querySelectorAll('.pgto-row');
+  rows.forEach(row=>{
+    if(row.classList.contains('mob-converted'))return;
+    row.classList.add('mob-converted');
+    // reorganizar conteúdo
+    const children=[...row.children];
+    if(children.length<6)return;
+    const nome=children[0];const valor=children[1];const badge=children[2];
+    const data=children[3];const contrato=children[4];const toggle=children[5];
+    row.innerHTML='';
+    const top=document.createElement('div');top.className='pgto-row-top';
+    top.appendChild(nome);top.appendChild(toggle);
+    const bot=document.createElement('div');bot.className='pgto-row-bottom';
+    bot.appendChild(valor);bot.appendChild(badge);bot.appendChild(data);
+    row.appendChild(top);row.appendChild(bot);
+  });
+}
+
+// Patch renderFinanceiro para mobile
+const _origRenderFin=renderFinanceiro;
+window.renderFinanceiro=function(){
+  _origRenderFin();
+  setTimeout(renderFinanceiroMobile,50);
+};
+
+// PWA Service Worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').then(()=>{
+      console.log('SW registrado');
+    }).catch(()=>{});
+  });
+}
+
+// Prompt de instalação PWA
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredPrompt=e;
+  // mostrar botão de instalar no backup page
+  const btn=document.getElementById('btn-install-pwa');
+  if(btn)btn.style.display='inline-flex';
+});
+function instalarPWA(){
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(()=>{deferredPrompt=null;});
+}
+
 // ── INIT ──
-renderDashboard();updateBadge();atualizarBadgeAtrasados();
+renderDashboard();updateBadge();atualizarBadgeAtrasados();syncThemeColor();
 </script>
+
+<!-- TAB BAR MOBILE -->
+<nav class="mob-tabbar" id="mob-tabbar">
+  <button class="mob-tab active" id="mobtab-dashboard" onclick="navigate('dashboard');setMobTab('dashboard')">
+    <div class="mob-tab-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </div>
+    Dashboard
+  </button>
+  <button class="mob-tab" id="mobtab-clientes" onclick="navigate('clientes');setMobTab('clientes')">
+    <div class="mob-tab-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+      <span id="mob-badge-cl" class="mob-badge" style="display:none">0</span>
+    </div>
+    Clientes
+  </button>
+  <button class="mob-tab" id="mobtab-financeiro" onclick="navigate('financeiro');setMobTab('financeiro')">
+    <div class="mob-tab-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span id="mob-badge-fin" class="mob-badge" style="display:none">!</span>
+    </div>
+    Financeiro
+  </button>
+  <button class="mob-tab" id="mobtab-briefings" onclick="navigate('briefings');setMobTab('briefings')">
+    <div class="mob-tab-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+    </div>
+    Docs
+  </button>
+  <button class="mob-tab" id="mobtab-backup" onclick="navigate('backup');setMobTab('backup')">
+    <div class="mob-tab-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+    </div>
+    Backup
+  </button>
+</nav>
+
+<!-- MENSAGEM PDM DESKTOP ONLY -->
+<div class="mob-desktop-msg" id="mob-pdm-msg" style="display:none;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:16px">
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+  <div>
+    <div style="font-family:var(--font-d);font-weight:700;font-size:16px;margin-bottom:6px">Use o desktop</div>
+    <div style="font-size:13px;color:var(--muted)">O editor de PDM é otimizado para telas maiores. Acesse pelo computador para criar e editar planos de mídia.</div>
+  </div>
+</div>
+
 </body>
 </html>
