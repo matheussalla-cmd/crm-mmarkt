@@ -260,12 +260,56 @@ tr:hover td{background:var(--accent-dim);}
 .invest-item{font-size:12px;color:var(--muted);}
 .invest-item strong{display:block;font-family:var(--font-m);font-size:18px;font-weight:700;color:var(--text);}
 
+/* ── FINANCEIRO ── */
+.fin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.fin-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.fin-stat-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.fin-stat-value{font-family:var(--font-m);font-size:24px;font-weight:700;}
+.fin-stat-value.green{color:var(--success);}
+.fin-stat-value.yellow{color:var(--accent);}
+[data-theme="light"] .fin-stat-value.yellow{color:#1A1A1A;}
+.fin-stat-value.red{color:var(--danger);}
+.fin-stat-value.neutral{color:var(--text);}
+.fin-stat-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.fin-filter{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.fin-filter label{font-size:12px;color:var(--muted);font-weight:500;}
+.fin-filter input,.fin-filter select{background:var(--input-bg);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:7px 12px;font-size:13px;outline:none;}
+.fin-filter input:focus,.fin-filter select:focus{border-color:var(--accent);}
+.pgto-row{display:grid;grid-template-columns:2fr 120px 110px 130px 130px 100px;gap:10px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);}
+.pgto-row:last-child{border-bottom:none;}
+.pgto-row:hover{background:var(--accent-dim);}
+.pgto-cliente-name{font-weight:600;font-size:13px;}
+.pgto-cliente-nicho{font-size:11px;color:var(--muted);}
+.pgto-valor{font-family:var(--font-m);font-size:14px;font-weight:700;}
+.dias-badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.dias-ok{background:rgba(34,197,94,.12);color:var(--success);}
+.dias-soon{background:rgba(245,158,11,.12);color:var(--warning);}
+.dias-late{background:rgba(239,68,68,.12);color:var(--danger);}
+.dias-paid{background:rgba(34,197,94,.08);color:var(--muted);}
+.toggle-pago{position:relative;width:44px;height:24px;cursor:pointer;flex-shrink:0;}
+.toggle-pago input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:24px;transition:.2s;}
+.toggle-slider:before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;}
+.toggle-pago input:checked+.toggle-slider{background:var(--success);}
+.toggle-pago input:checked+.toggle-slider:before{transform:translateX(20px);}
+.mes-btn{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+.mes-btn:hover{border-color:var(--muted2);color:var(--text);}
+.mes-btn.active{background:var(--accent);color:var(--accent-txt);border-color:transparent;}
+[data-theme="light"] .mes-btn.active{background:#1A1A1A;color:#fff;}
+.meses-nav{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px;}
+
+/* ── BACKUP ── */
+.backup-bar{display:flex;gap:10px;align-items:center;padding:14px 20px;background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:24px;flex-wrap:wrap;}
+.backup-bar-info{flex:1;font-size:13px;color:var(--muted);}
+.backup-bar-info strong{color:var(--text);}
+
 /* ── MISC ── */
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
 .divider{height:1px;background:var(--border);margin:18px 0;}
 .page{display:none;}
 .page.active{display:block;}
-@media(max-width:900px){.stats-row{grid-template-columns:1fr 1fr;}.clients-grid{grid-template-columns:1fr;}.camp-row{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){.stats-row{grid-template-columns:1fr 1fr;}.fin-stats{grid-template-columns:1fr 1fr;}.clients-grid{grid-template-columns:1fr;}.camp-row{grid-template-columns:1fr 1fr;}.pgto-row{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
@@ -318,6 +362,16 @@ tr:hover td{background:var(--accent-dim);}
       <div class="nav-label">Documentos</div>
       <button class="nav-item" onclick="navigate('briefings')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Briefings
+      </button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Gestão</div>
+      <button class="nav-item" onclick="navigate('financeiro')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Financeiro
+        <span class="badge" id="badge-atrasados" style="background:var(--danger);display:none">!</span>
+      </button>
+      <button class="nav-item" onclick="navigate('backup')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>Backup & Dados
       </button>
     </div>
   </nav>
@@ -384,6 +438,22 @@ tr:hover td{background:var(--accent-dim);}
             <div class="field"><label>Observações internas</label><textarea id="nc-obs" placeholder="Notas sobre o cliente..."></textarea></div>
           </div>
         </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-header"><span class="card-title">Contrato &amp; Financeiro</span></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="field"><label>Honorário mensal (R$)</label><div class="input-group"><span class="prefix">R$</span><input type="number" id="nc-honorario" placeholder="0,00" min="0" step="100" style="padding-left:36px"></div></div>
+              <div class="field"><label>Dia de vencimento</label><input type="number" id="nc-dia-pgto" placeholder="Ex: 5" min="1" max="31"></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label>Duração do contrato (meses)</label><input type="number" id="nc-meses" placeholder="Ex: 3, 6, 12" min="1"></div>
+              <div class="field"><label>Início do contrato</label><input type="date" id="nc-inicio-contrato"></div>
+            </div>
+            <div class="field"><label>Observação financeira</label><input type="text" id="nc-obs-fin" placeholder="Ex: Pagamento via PIX, NF emitida todo dia 1º..."></div>
+          </div>
+        </div>
+
         <div class="card" style="margin-top:14px">
           <div class="card-header"><span class="card-title">Briefing (PDF)</span></div>
           <div class="card-body">
@@ -488,6 +558,108 @@ tr:hover td{background:var(--accent-dim);}
 
     <!-- DETALHE CLIENTE -->
     <div class="page" id="page-cliente-detalhe"><div id="detalhe-wrap"></div></div>
+
+    <!-- FINANCEIRO -->
+    <div class="page" id="page-financeiro">
+      <div class="fin-stats">
+        <div class="fin-stat"><div class="fin-stat-label">Receita do mês</div><div class="fin-stat-value green" id="fin-receita-mes">R$ 0</div><div class="fin-stat-sub" id="fin-receita-sub">mês atual</div></div>
+        <div class="fin-stat"><div class="fin-stat-label">Contratos ativos</div><div class="fin-stat-value yellow" id="fin-contratos">0</div><div class="fin-stat-sub">clientes com contrato</div></div>
+        <div class="fin-stat"><div class="fin-stat-label">Pagos este mês</div><div class="fin-stat-value green" id="fin-pagos">0</div><div class="fin-stat-sub" id="fin-pagos-val">R$ 0</div></div>
+        <div class="fin-stat"><div class="fin-stat-label">Em aberto</div><div class="fin-stat-value red" id="fin-aberto">0</div><div class="fin-stat-sub" id="fin-aberto-val">R$ 0</div></div>
+      </div>
+
+      <!-- filtro período -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-body" style="padding:14px 20px">
+          <div class="fin-filter">
+            <label>Filtrar por período:</label>
+            <input type="month" id="fin-mes-filtro">
+            <button class="btn btn-ghost btn-sm" onclick="filtrarFinanceiro()">Aplicar</button>
+            <button class="btn btn-ghost btn-sm" onclick="mesAtualFinanceiro()">Mês atual</button>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+              <label style="font-size:12px;color:var(--muted)">Receita no período:</label>
+              <span style="font-family:var(--font-m);font-size:16px;font-weight:700;color:var(--success)" id="fin-periodo-total">R$ 0,00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Pagamentos por cliente</span>
+          <span style="font-size:12px;color:var(--muted)" id="fin-mes-label"></span>
+        </div>
+        <div id="fin-table-wrap">
+          <div style="display:grid;grid-template-columns:2fr 120px 110px 130px 130px 100px;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border)">
+            <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:.8px;text-transform:uppercase">Cliente</span>
+            <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:.8px;text-transform:uppercase">Honorário</span>
+            <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:.8px;text-transform:uppercase">Vencimento</span>
+            <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:.8px;text-transform:uppercase">Status</span>
+            <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:.8px;text-transform:uppercase">Contrato</span>
+            <span style="font-size:10px;font-weight:600;color:var(--muted2);letter-spacing:.8px;text-transform:uppercase">Pago</span>
+          </div>
+          <div id="fin-rows"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BACKUP -->
+    <div class="page" id="page-backup">
+      <div style="max-width:680px">
+        <div class="backup-bar">
+          <div class="backup-bar-info">
+            <strong>Backup & Restauração de Dados</strong><br>
+            Exporte todos os dados para um arquivo JSON e importe em outro computador.
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><span class="card-title">📤 Exportar dados</span></div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Gera um arquivo <code style="font-family:var(--font-m);font-size:12px;background:var(--input-bg);padding:2px 6px;border-radius:4px">.json</code> com todos os clientes, PDMs, briefings e pagamentos. Salve em lugar seguro.</p>
+            <div style="display:flex;gap:12px;align-items:center;padding:14px 16px;background:var(--input-bg);border:1px solid var(--border2);border-radius:10px;margin-bottom:16px">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <div>
+                <div style="font-size:13px;font-weight:600" id="backup-summary">—</div>
+                <div style="font-size:12px;color:var(--muted)">dados no sistema agora</div>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="exportarDados()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Exportar backup (.json)
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">📥 Importar dados</span></div>
+          <div class="card-body">
+            <div style="padding:12px 16px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;margin-bottom:16px">
+              <p style="font-size:12px;color:var(--danger);font-weight:500;">⚠️ Atenção: importar irá <strong>substituir todos os dados atuais</strong>. Faça um backup antes de importar.</p>
+            </div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Selecione o arquivo <code style="font-family:var(--font-m);font-size:12px;background:var(--input-bg);padding:2px 6px;border-radius:4px">.json</code> exportado anteriormente.</p>
+            <div class="upload-zone" onclick="document.getElementById('import-input').click()" style="padding:24px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <p><strong>Clique para selecionar</strong> o arquivo de backup</p>
+              <p style="font-size:12px;margin-top:4px">Apenas arquivos .json gerados por esta ferramenta</p>
+            </div>
+            <input type="file" id="import-input" accept=".json" style="display:none" onchange="importarDados(this)">
+            <div id="import-preview" style="display:none;margin-top:14px"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><span class="card-title">🗑️ Limpar dados</span></div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Remove todos os dados do sistema neste navegador. Use somente após exportar backup.</p>
+            <button class="btn btn-danger" onclick="limparDados()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+              Limpar todos os dados
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </main>
@@ -608,7 +780,7 @@ function updateThemeIcons(t){
 // ═══════════════════════════════════════════════════
 // NAVEGAÇÃO
 // ═══════════════════════════════════════════════════
-const TITLES={dashboard:'Dashboard',clientes:'Clientes','novo-cliente':'Novo cliente',pdm:'Editor de PDM',briefings:'Briefings','cliente-detalhe':'Detalhe do cliente'};
+const TITLES={dashboard:'Dashboard',clientes:'Clientes','novo-cliente':'Novo cliente',pdm:'Editor de PDM',briefings:'Briefings','cliente-detalhe':'Detalhe do cliente',financeiro:'Financeiro',backup:'Backup & Dados'};
 function navigate(page,param){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -622,6 +794,8 @@ function navigate(page,param){
   if(page==='pdm')renderPDMPage(param);
   if(page==='briefings')renderBriefings();
   if(page==='cliente-detalhe'&&param)renderDetalhe(param);
+  if(page==='financeiro'){mesAtualFinanceiro();atualizarBadgeAtrasados();}
+  if(page==='backup')renderBackup();
   if(page==='clientes')act.innerHTML='<button class="btn btn-primary btn-sm" onclick="navigate(\'novo-cliente\')">+ Novo cliente</button>';
   if(page==='pdm')act.innerHTML='<button class="btn btn-ghost btn-sm" onclick="navigate(\'clientes\')">← Voltar</button>';
   if(page==='cliente-detalhe')act.innerHTML='<button class="btn btn-ghost btn-sm" onclick="navigate(\'clientes\')">← Voltar</button>';
@@ -705,13 +879,20 @@ function setupClientForm(clientId){
     document.getElementById('nc-email').value=c.email||'';
     document.getElementById('nc-status').value=c.status;
     document.getElementById('nc-obs').value=c.obs||'';
+    document.getElementById('nc-honorario').value=c.honorario||'';
+    document.getElementById('nc-dia-pgto').value=c.diaPgto||'';
+    document.getElementById('nc-meses').value=c.mesesContrato||'';
+    document.getElementById('nc-inicio-contrato').value=c.inicioContrato||'';
+    document.getElementById('nc-obs-fin').value=c.obsFin||'';
     renderBriefingSlot(c);
   } else {
     document.getElementById('form-cli-title').textContent='Dados do cliente';
     document.getElementById('btn-save-lbl').textContent='Salvar cliente';
     document.getElementById('nc-id').value='';
-    ['nc-nome','nc-nicho','nc-resp','nc-wa','nc-email','nc-obs'].forEach(id=>document.getElementById(id).value='');
+    ['nc-nome','nc-nicho','nc-resp','nc-wa','nc-email','nc-obs','nc-obs-fin'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('nc-status').value='prospecto';
+    ['nc-honorario','nc-dia-pgto','nc-meses'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('nc-inicio-contrato').value='';
   }
 }
 
@@ -792,10 +973,36 @@ function saveClient(){
       }
       briefingName=selectedFile.name;briefingData=selectedFile._data;
     }
-    db.clients[idx]={...old,nome,nicho,responsavel:document.getElementById('nc-resp').value.trim(),whatsapp:document.getElementById('nc-wa').value.trim(),email:document.getElementById('nc-email').value.trim(),status:document.getElementById('nc-status').value,obs:document.getElementById('nc-obs').value.trim(),briefingName,briefingData,briefingBackups};
+    db.clients[idx]={...old,nome,nicho,
+      responsavel:document.getElementById('nc-resp').value.trim(),
+      whatsapp:document.getElementById('nc-wa').value.trim(),
+      email:document.getElementById('nc-email').value.trim(),
+      status:document.getElementById('nc-status').value,
+      obs:document.getElementById('nc-obs').value.trim(),
+      honorario:parseFloat(document.getElementById('nc-honorario').value)||0,
+      diaPgto:parseInt(document.getElementById('nc-dia-pgto').value)||null,
+      mesesContrato:parseInt(document.getElementById('nc-meses').value)||null,
+      inicioContrato:document.getElementById('nc-inicio-contrato').value||null,
+      obsFin:document.getElementById('nc-obs-fin').value.trim(),
+      briefingName,briefingData,briefingBackups};
     DB.persist();toast('Cliente atualizado!','success');
   } else {
-    db.clients.push({id:uid(),nome,nicho,responsavel:document.getElementById('nc-resp').value.trim(),whatsapp:document.getElementById('nc-wa').value.trim(),email:document.getElementById('nc-email').value.trim(),status:document.getElementById('nc-status').value,obs:document.getElementById('nc-obs').value.trim(),briefingName:selectedFile?selectedFile.name:null,briefingData:selectedFile?selectedFile._data:null,briefingBackups:[],createdAt:new Date().toISOString()});
+    db.clients.push({id:uid(),nome,nicho,
+      responsavel:document.getElementById('nc-resp').value.trim(),
+      whatsapp:document.getElementById('nc-wa').value.trim(),
+      email:document.getElementById('nc-email').value.trim(),
+      status:document.getElementById('nc-status').value,
+      obs:document.getElementById('nc-obs').value.trim(),
+      honorario:parseFloat(document.getElementById('nc-honorario').value)||0,
+      diaPgto:parseInt(document.getElementById('nc-dia-pgto').value)||null,
+      mesesContrato:parseInt(document.getElementById('nc-meses').value)||null,
+      inicioContrato:document.getElementById('nc-inicio-contrato').value||null,
+      obsFin:document.getElementById('nc-obs-fin').value.trim(),
+      briefingName:selectedFile?selectedFile.name:null,
+      briefingData:selectedFile?selectedFile._data:null,
+      briefingBackups:[],
+      pagamentos:{},
+      createdAt:new Date().toISOString()});
     DB.persist();toast('Cliente salvo!','success');
   }
   navigate('clientes');
@@ -1289,8 +1496,250 @@ function toast(msg,type='success'){
   document.getElementById('toasts').appendChild(el);setTimeout(()=>el.remove(),3500);
 }
 
+
+// ═══════════════════════════════════════════════════
+// FINANCEIRO
+// ═══════════════════════════════════════════════════
+
+// chave do pagamento: clientId + 'YYYY-MM'
+function pgtoKey(clientId, ano, mes){
+  return clientId+'_'+ano+'-'+(mes<10?'0'+mes:mes);
+}
+
+function getPgtoStatus(clientId, ano, mes){
+  const db=DB.get();
+  const key=pgtoKey(clientId,ano,mes);
+  return (db.pagamentos||{})[key]||{pago:false};
+}
+
+function setPgtoStatus(clientId, ano, mes, pago){
+  const db=DB.get();
+  if(!db.pagamentos)db.pagamentos={};
+  const key=pgtoKey(clientId,ano,mes);
+  db.pagamentos[key]={pago,updatedAt:new Date().toISOString()};
+  DB.persist();
+  atualizarBadgeAtrasados();
+}
+
+let finAnoAtual=new Date().getFullYear();
+let finMesAtual=new Date().getMonth()+1;
+
+function mesAtualFinanceiro(){
+  const now=new Date();
+  finAnoAtual=now.getFullYear();finMesAtual=now.getMonth()+1;
+  const val=finAnoAtual+'-'+(finMesAtual<10?'0'+finMesAtual:finMesAtual);
+  document.getElementById('fin-mes-filtro').value=val;
+  renderFinanceiro();
+}
+
+function filtrarFinanceiro(){
+  const v=document.getElementById('fin-mes-filtro').value;
+  if(!v)return;
+  const [a,m]=v.split('-').map(Number);
+  finAnoAtual=a;finMesAtual=m;
+  renderFinanceiro();
+}
+
+function renderFinanceiro(){
+  const db=DB.get();
+  const now=new Date();
+  const ano=finAnoAtual,mes=finMesAtual;
+
+  // label mês
+  const nomeMes=new Date(ano,mes-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const label=document.getElementById('fin-mes-label');
+  if(label)label.textContent=nomeMes;
+  const filtroEl=document.getElementById('fin-mes-filtro');
+  if(filtroEl&&!filtroEl.value)filtroEl.value=ano+'-'+(mes<10?'0'+mes:mes);
+
+  const comContrato=db.clients.filter(c=>c.honorario>0);
+  document.getElementById('fin-contratos').textContent=comContrato.length;
+
+  let receitaMes=0,pagosCount=0,pagosVal=0,abertoCount=0,abertoVal=0;
+
+  // stats do mês atual real para os cards de topo
+  const mesHoje=now.getMonth()+1,anoHoje=now.getFullYear();
+  comContrato.forEach(c=>{
+    const st=getPgtoStatus(c.id,anoHoje,mesHoje);
+    receitaMes+=c.honorario||0;
+    if(st.pago){pagosCount++;pagosVal+=c.honorario||0;}
+    else{abertoCount++;abertoVal+=c.honorario||0;}
+  });
+  document.getElementById('fin-receita-mes').textContent='R$ '+fmtBRL(receitaMes);
+  document.getElementById('fin-receita-sub').textContent='potencial '+new Date(anoHoje,mesHoje-1,1).toLocaleDateString('pt-BR',{month:'short',year:'numeric'});
+  document.getElementById('fin-pagos').textContent=pagosCount;
+  document.getElementById('fin-pagos-val').textContent='R$ '+fmtBRL(pagosVal);
+  document.getElementById('fin-aberto').textContent=abertoCount;
+  document.getElementById('fin-aberto-val').textContent='R$ '+fmtBRL(abertoVal);
+
+  // total do período filtrado
+  let periodoTotal=0;
+  comContrato.forEach(c=>{
+    const st=getPgtoStatus(c.id,ano,mes);
+    if(st.pago)periodoTotal+=c.honorario||0;
+  });
+  document.getElementById('fin-periodo-total').textContent='R$ '+fmtBRL(periodoTotal);
+
+  // linhas da tabela
+  const rowsEl=document.getElementById('fin-rows');
+  if(!comContrato.length){
+    rowsEl.innerHTML='<div class="empty" style="padding:40px"><p>Nenhum cliente com contrato cadastrado. Edite um cliente e preencha o honorário.</p></div>';
+    return;
+  }
+
+  rowsEl.innerHTML=comContrato.map(c=>{
+    const st=getPgtoStatus(c.id,ano,mes);
+    const dia=c.diaPgto||1;
+    const vencimento=new Date(ano,mes-1,dia);
+    const hoje=new Date();hoje.setHours(0,0,0,0);
+    const diffDias=Math.round((vencimento-hoje)/(1000*60*60*24));
+    let diasBadge='';
+    if(st.pago){
+      diasBadge='<span class="dias-badge dias-paid">✓ Pago</span>';
+    } else if(diffDias<0){
+      diasBadge=`<span class="dias-badge dias-late">${Math.abs(diffDias)}d atrasado</span>`;
+    } else if(diffDias<=5){
+      diasBadge=`<span class="dias-badge dias-soon">vence em ${diffDias}d</span>`;
+    } else {
+      diasBadge=`<span class="dias-badge dias-ok">vence dia ${dia}</span>`;
+    }
+
+    // info contrato
+    let contratoInfo='—';
+    if(c.mesesContrato&&c.inicioContrato){
+      const ini=new Date(c.inicioContrato+'T12:00:00');
+      const fim=new Date(ini);fim.setMonth(fim.getMonth()+c.mesesContrato);
+      contratoInfo=`${c.mesesContrato}m · até ${fim.toLocaleDateString('pt-BR',{month:'short',year:'numeric'})}`;
+    } else if(c.mesesContrato){
+      contratoInfo=`${c.mesesContrato} meses`;
+    }
+
+    const chave=pgtoKey(c.id,ano,mes);
+    return`<div class="pgto-row">
+      <div>
+        <div class="pgto-cliente-name">${c.nome}</div>
+        <div class="pgto-cliente-nicho">${c.nicho}${c.obsFin?' · '+c.obsFin:''}</div>
+      </div>
+      <div class="pgto-valor">R$ ${fmtBRL(c.honorario||0)}</div>
+      <div>${diasBadge}</div>
+      <div style="font-size:12px;color:var(--muted)">${dias(vencimento,ano,mes)}</div>
+      <div style="font-size:12px;color:var(--muted)">${contratoInfo}</div>
+      <label class="toggle-pago" title="${st.pago?'Marcar como não pago':'Marcar como pago'}">
+        <input type="checkbox" ${st.pago?'checked':''} onchange="setPgtoStatus('${c.id}',${ano},${mes},this.checked);renderFinanceiro()">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>`;
+  }).join('');
+}
+
+function dias(vencimento,ano,mes){
+  // mostrar data de vencimento formatada
+  return vencimento.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+}
+
+function atualizarBadgeAtrasados(){
+  const db=DB.get();
+  const hoje=new Date();
+  const ano=hoje.getFullYear(),mes=hoje.getMonth()+1;
+  const comContrato=db.clients.filter(c=>c.honorario>0);
+  let atrasados=0;
+  comContrato.forEach(c=>{
+    const st=getPgtoStatus(c.id,ano,mes);
+    if(!st.pago){
+      const dia=c.diaPgto||1;
+      const venc=new Date(ano,mes-1,dia);
+      const diff=Math.round((venc-hoje)/(1000*60*60*24));
+      if(diff<0)atrasados++;
+    }
+  });
+  const badge=document.getElementById('badge-atrasados');
+  if(badge){badge.style.display=atrasados>0?'inline':'none';}
+}
+
+// ═══════════════════════════════════════════════════
+// BACKUP & RESTAURAÇÃO
+// ═══════════════════════════════════════════════════
+
+function renderBackup(){
+  const db=DB.get();
+  const clientes=db.clients.length;
+  const pdms=db.pdms.length;
+  const pgtos=Object.keys(db.pagamentos||{}).length;
+  const el=document.getElementById('backup-summary');
+  if(el)el.textContent=`${clientes} cliente(s) · ${pdms} PDM(s) · ${pgtos} registro(s) de pagamento`;
+}
+
+function exportarDados(){
+  const db=DB.get();
+  const payload={
+    versao:'1.0',
+    exportadoEm:new Date().toISOString(),
+    dados:db
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const data=new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
+  a.href=url;a.download=`mmarkt-backup-${data}.json`;a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup exportado com sucesso!','success');
+}
+
+function importarDados(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const payload=JSON.parse(e.target.result);
+      if(!payload.dados||!payload.dados.clients){
+        toast('Arquivo inválido ou corrompido.','error');return;
+      }
+      const d=payload.dados;
+      const preview=document.getElementById('import-preview');
+      preview.style.display='block';
+      preview.innerHTML=`
+        <div style="padding:14px 16px;background:var(--input-bg);border:1px solid var(--border2);border-radius:10px;margin-bottom:12px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">Prévia do arquivo:</div>
+          <div style="font-size:12px;color:var(--muted)">${d.clients.length} cliente(s) · ${(d.pdms||[]).length} PDM(s) · ${Object.keys(d.pagamentos||{}).length} pagamento(s)</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">Exportado em: ${payload.exportadoEm?new Date(payload.exportadoEm).toLocaleDateString('pt-BR'):'-'}</div>
+        </div>
+        <button class="btn btn-danger" onclick="confirmarImport()">
+          ⚠️ Confirmar importação (substitui tudo)
+        </button>`;
+      // guardar dados para confirmar
+      window._importPending=d;
+    }catch(err){
+      toast('Erro ao ler arquivo: '+err.message,'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function confirmarImport(){
+  if(!window._importPending){toast('Nenhum dado pendente.','error');return;}
+  const d=window._importPending;
+  DB._d=d;DB.persist();
+  window._importPending=null;
+  document.getElementById('import-preview').style.display='none';
+  document.getElementById('import-input').value='';
+  renderBackup();
+  updateBadge();
+  atualizarBadgeAtrasados();
+  toast('Dados importados com sucesso!','success');
+}
+
+function limparDados(){
+  if(!confirm('Tem certeza? Todos os dados serão apagados. Esta ação não pode ser desfeita.'))return;
+  localStorage.removeItem('mmarkt_db');
+  DB._d=null;
+  renderBackup();
+  updateBadge();
+  renderDashboard();
+  toast('Dados apagados.','info');
+}
+
 // ── INIT ──
-renderDashboard();updateBadge();
+renderDashboard();updateBadge();atualizarBadgeAtrasados();
 </script>
 </body>
 </html>
