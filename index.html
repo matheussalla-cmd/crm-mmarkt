@@ -530,7 +530,7 @@ tr:hover td{background:var(--accent-dim);}
       <div class="card">
         <div class="card-header"><span class="card-title">Clientes recentes</span><button class="btn btn-ghost btn-sm" onclick="navigate('clientes')">Ver todos</button></div>
         <div class="card-body" style="padding:0"><div class="table-wrap"><table>
-          <thead><tr><th>Cliente</th><th class="dash-col-hide">Nicho</th><th>Status</th><th class="dash-col-hide">Verba mensal</th><th class="dash-col-hide">PDM</th><th></th></tr></thead>
+          <thead><tr><th>Cliente</th><th>Status</th><th class="dash-col-hide">Verba/mês</th><th class="dash-col-hide">Movimentado</th><th class="dash-col-hide">PDM ativo</th><th></th></tr></thead>
           <tbody id="dashboard-tbody"></tbody>
         </table></div></div>
       </div>
@@ -607,11 +607,14 @@ tr:hover td{background:var(--accent-dim);}
           <div class="card-body">
             <div class="form-row">
               <div class="field"><label>Cliente *</label><select id="pdm-cliente"><option value="">— selecione —</option></select></div>
-              <div class="field"><label>Objetivo geral</label><input type="text" id="pdm-objetivo" placeholder="Ex: Geração de leads — clínica zona sul SP"></div>
+              <div class="field"><label>Nome do PDM *</label><input type="text" id="pdm-nome" placeholder="Ex: Plano Meta — Jan/2025, PDM Anual 2025..."></div>
             </div>
             <div class="form-row">
-              <div class="field"><label>Início do plano</label><input type="date" id="pdm-inicio"></div>
-              <div class="field"><label>Fim do plano</label><input type="date" id="pdm-fim"></div>
+              <div class="field"><label>Objetivo geral</label><input type="text" id="pdm-objetivo" placeholder="Ex: Geração de leads — clínica zona sul SP"></div>
+              <div class="field" style="display:flex;gap:10px">
+                <div style="flex:1"><label>Início do plano</label><input type="date" id="pdm-inicio"></div>
+                <div style="flex:1"><label>Fim do plano</label><input type="date" id="pdm-fim"></div>
+              </div>
             </div>
             <div id="pdm-hist-wrap" style="display:none">
               <div class="divider"></div>
@@ -826,6 +829,64 @@ tr:hover td{background:var(--accent-dim);}
   </div>
 </main>
 
+
+<!-- MODAL: EDITAR CLIENTE -->
+<div class="overlay hidden" id="modal-editar-cliente">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-edit-cli-title">Editar cliente</span>
+      <button class="btn-icon" onclick="closeModal('modal-editar-cliente')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px">
+      <input type="hidden" id="medit-id">
+
+      <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px">Dados gerais</div>
+      <div class="form-row">
+        <div class="field"><label>Nome / Empresa *</label><input type="text" id="medit-nome" placeholder="Ex: Clínica Bela Forma"></div>
+        <div class="field"><label>Nicho / Segmento *</label><input type="text" id="medit-nicho" placeholder="Ex: Estética, Imóveis..."></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Responsável</label><input type="text" id="medit-resp" placeholder="Nome do contato"></div>
+        <div class="field"><label>WhatsApp</label><div class="input-group"><span class="prefix">+55</span><input type="text" id="medit-wa" placeholder="11 9 9999-9999"></div></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>E-mail</label><input type="email" id="medit-email" placeholder="contato@empresa.com"></div>
+        <div class="field"><label>Status</label>
+          <select id="medit-status">
+            <option value="prospecto">Prospecto</option>
+            <option value="ativo">Ativo</option>
+            <option value="pausado">Pausado</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Observações internas</label><textarea id="medit-obs" placeholder="Notas sobre o cliente..." style="min-height:60px"></textarea></div>
+
+      <div class="divider"></div>
+      <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px">Contrato & Financeiro</div>
+      <div class="form-row">
+        <div class="field"><label>Honorário mensal (R$)</label><div class="input-group"><span class="prefix">R$</span><input type="number" id="medit-honorario" placeholder="0,00" min="0" step="100" style="padding-left:36px"></div></div>
+        <div class="field"><label>Dia de vencimento</label><input type="number" id="medit-dia-pgto" placeholder="Ex: 5" min="1" max="31"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Duração do contrato (meses)</label><input type="number" id="medit-meses" placeholder="Ex: 3, 6, 12" min="1"></div>
+        <div class="field"><label>Início do contrato</label><input type="date" id="medit-inicio-contrato"></div>
+      </div>
+      <div class="field"><label>Observação financeira</label><input type="text" id="medit-obs-fin" placeholder="Ex: Pagamento via PIX, NF emitida todo dia 1º..."></div>
+
+      <div class="divider"></div>
+      <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px">Briefing (PDF)</div>
+      <div id="medit-briefing-area"></div>
+      <input type="file" id="medit-file-input" accept=".pdf" style="display:none" onchange="handleModalBriefing(this)">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-editar-cliente')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarEdicaoCliente()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+        Salvar alterações
+      </button>
+    </div>
+  </div>
+</div>
 <!-- MODAL: PRORROGAR -->
 <div class="overlay hidden" id="modal-prorrogar">
   <div class="modal" style="max-width:440px">
@@ -971,8 +1032,7 @@ function updateBadge(){document.getElementById('badge-clientes').textContent=DB.
 function renderDashboard(){
   const db=DB.get();
   // total movimentado = soma de todos os PDMs (todos históricos + atuais)
-  let mov=0;
-  db.pdms.forEach(p=>{mov+=totalVerbaGrupos(p.grupos||[]);});
+  const mov=totalMovimentadoGlobal();
   const ativos=db.clients.filter(c=>c.status==='ativo').length;
   const pdmsAtivos=db.pdms.filter(p=>p.isCurrent!==false).length;
   document.getElementById('stat-movimentado').textContent='R$ '+fmtBRL(mov);
@@ -985,15 +1045,16 @@ function renderDashboard(){
   tbody.innerHTML=[...db.clients].reverse().slice(0,8).map(c=>{
     const pdm=db.pdms.find(p=>p.clientId===c.id&&p.isCurrent!==false);
     const tv=pdm?totalVerbaGrupos(pdm.grupos||[]):0;
+    const movCli=totalMovimentadoCliente(c.id);
     return`<tr>
       <td><div style="display:flex;align-items:center;gap:10px">
         <div class="client-avatar" style="width:32px;height:32px;font-size:12px">${initials(c.nome)}</div>
-        <div><div style="font-weight:600">${c.nome}</div><div style="font-size:12px;color:var(--muted)">${c.email||'—'}</div></div>
+        <div><div style="font-weight:600">${c.nome}</div><div style="font-size:12px;color:var(--muted)">${c.nicho}</div></div>
       </div></td>
-      <td style="color:var(--muted)">${c.nicho}</td>
       <td><span class="client-status status-${c.status}">${cap(c.status)}</span></td>
-      <td style="font-family:var(--font-m)">${pdm?'R$ '+fmtBRL(tv):'—'}</td>
-      <td>${pdm?'<span style="color:var(--success);font-size:12px">✓</span>':'<span style="color:var(--muted2)">—</span>'}</td>
+      <td style="font-family:var(--font-m);font-size:13px">${pdm?'R$ '+fmtBRL(tv):'—'}</td>
+      <td style="font-family:var(--font-m);font-size:13px;color:var(--success);font-weight:700">${movCli>0?'R$ '+fmtBRL(movCli):'—'}</td>
+      <td style="font-size:11px;color:var(--muted)">${pdm?pdm.nome||'PDM ativo':'—'}</td>
       <td><button class="btn btn-ghost btn-sm" onclick="navigate('cliente-detalhe','${c.id}')">Ver</button></td>
     </tr>`;
   }).join('');
@@ -1008,13 +1069,14 @@ function renderClientes(){
   wrap.innerHTML='<div class="clients-grid">'+db.clients.map(c=>{
     const pdm=db.pdms.find(p=>p.clientId===c.id&&p.isCurrent!==false);
     const tv=pdm?totalVerbaGrupos(pdm.grupos||[]):0;
+    const movCli=totalMovimentadoCliente(c.id);
     return`<div class="client-card" onclick="navigate('cliente-detalhe','${c.id}')">
       <div class="client-card-top"><div class="client-avatar">${initials(c.nome)}</div><span class="client-status status-${c.status}">${cap(c.status)}</span></div>
       <div class="client-name">${c.nome}</div>
       <div class="client-nicho">${c.nicho}</div>
       <div class="client-meta">
         <div class="client-meta-item"><strong>${pdm?'R$ '+fmtBRL(tv):'—'}</strong>Verba/mês</div>
-        <div class="client-meta-item"><strong>${pdm?(pdm.grupos||[]).length:'—'}</strong>Grupos</div>
+        <div class="client-meta-item"><strong style="color:var(--success)">${movCli>0?'R$ '+fmtBRL(movCli):'—'}</strong>Movimentado</div>
         <div class="client-meta-item"><strong>${c.briefingName?'✓':'—'}</strong>Briefing</div>
       </div>
     </div>`;
@@ -1177,37 +1239,57 @@ let deleteTargetId=null;
 
 function renderDetalhe(id){
   const db=DB.get();const c=db.clients.find(x=>x.id===id);if(!c)return;
-  const pdm=db.pdms.find(p=>p.clientId===id&&p.isCurrent!==false);
-  // total investido = soma de todos os PDMs deste cliente
+  const pdmAtual=db.pdms.find(p=>p.clientId===id&&p.isCurrent!==false);
   const allPdms=db.pdms.filter(p=>p.clientId===id);
-  const totalInvestido=allPdms.reduce((s,p)=>s+totalVerbaGrupos(p.grupos||[]),0);
+  // Total movimentado real (mensal × meses decorridos)
+  const totalMovimentado=totalMovimentadoCliente(id);
+  // Total de verba mensal atual
+  const verbaMensal=pdmAtual?totalVerbaGrupos(pdmAtual.grupos||[]):0;
 
   const act=document.getElementById('topbar-actions');
   act.innerHTML=`
-    <button class="btn btn-ghost btn-sm" onclick="navigate('novo-cliente','${id}')">
+    <button class="btn btn-primary btn-sm" onclick="abrirModalEdicaoCliente('${id}')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar cliente
     </button>
-    <button class="btn btn-ghost btn-sm" onclick="navigate('pdm','${id}')">${pdm?'Editar PDM':'+ Criar PDM'}</button>
+    <button class="btn btn-ghost btn-sm" onclick="navigate('pdm','${id}')">+ Novo PDM</button>
     <button class="btn btn-danger btn-sm" onclick="confirmDelete('${id}')">Excluir</button>`;
 
   document.getElementById('detalhe-wrap').innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:960px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:980px">
       <div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Informações</span><span class="client-status status-${c.status}">${cap(c.status)}</span></div>
+        <!-- CARD INFORMAÇÕES com edição inline -->
+        <div class="card" id="card-info-${id}">
+          <div class="card-header">
+            <span class="card-title">Informações</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="client-status status-${c.status}">${cap(c.status)}</span>
+              <button class="btn btn-ghost btn-xs" onclick="abrirModalEdicaoCliente('${id}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Editar
+              </button>
+            </div>
+          </div>
           <div class="card-body">
             <table style="width:100%">
-              ${row('Empresa',c.nome)}${row('Nicho',c.nicho)}${row('Responsável',c.responsavel||'—')}
-              ${row('WhatsApp',c.whatsapp?'+55 '+c.whatsapp:'—')}${row('E-mail',c.email||'—')}${row('Cadastrado',fmtDate(c.createdAt))}
+              ${row('Empresa',c.nome)}${row('Nicho',c.nicho)}
+              ${row('Responsável',c.responsavel||'—')}
+              ${row('WhatsApp',c.whatsapp?'+55 '+c.whatsapp:'—')}
+              ${row('E-mail',c.email||'—')}
+              ${row('Cadastrado',fmtDate(c.createdAt))}
+              ${c.honorario?row('Honorário','R$ '+fmtBRL(c.honorario)+'/mês'):''}
+              ${c.diaPgto?row('Vencimento','Dia '+c.diaPgto):''}
+              ${c.mesesContrato?row('Contrato',c.mesesContrato+'m'+((c.inicioContrato)?' · início '+fmtDate(c.inicioContrato+'T12:00:00'):'')):''}
             </table>
             ${c.obs?`<div class="divider"></div><p style="font-size:13px;color:var(--muted)">${c.obs}</p>`:''}
+            ${c.obsFin?`<p style="font-size:12px;color:var(--muted);margin-top:6px">💳 ${c.obsFin}</p>`:''}
           </div>
         </div>
 
+        <!-- BRIEFING -->
         <div class="card" style="margin-top:14px">
           <div class="card-header">
             <span class="card-title">Briefing</span>
-            <button class="btn btn-ghost btn-sm" onclick="navigate('novo-cliente','${id}')">
+            <button class="btn btn-ghost btn-sm" onclick="abrirModalEdicaoCliente('${id}')">
               ${c.briefingName?'Substituir':'+ Adicionar PDF'}
             </button>
           </div>
@@ -1217,7 +1299,7 @@ function renderDetalhe(id){
               <span class="pdf-item-name">${c.briefingName}</span>
               <button class="btn btn-ghost btn-sm" onclick="downloadBriefing('${c.id}')">Baixar</button>
             </div>
-            ${(c.briefingBackups||[]).length?`<div style="font-size:11px;color:var(--muted);margin:10px 0 6px">Backups:</div>`+
+            ${(c.briefingBackups||[]).length?'<div style="font-size:11px;color:var(--muted);margin:10px 0 6px">Backups:</div>'+
               (c.briefingBackups||[]).map((b,i)=>`<div class="pdf-item" style="opacity:.7">
                 <span class="pdf-item-name" style="font-size:12px">${b.name}</span>
                 <span class="pdf-item-size">${b.date}</span>
@@ -1227,31 +1309,62 @@ function renderDetalhe(id){
           </div>
         </div>
 
-        <!-- TOTAL INVESTIDO -->
+        <!-- INVESTIMENTO -->
         <div class="card" style="margin-top:14px">
-          <div class="card-header"><span class="card-title">Total investido</span></div>
+          <div class="card-header"><span class="card-title">📊 Investimento em tráfego</span></div>
           <div class="card-body">
-            <div class="invest-bar">
-              <div class="invest-item"><strong>R$ ${fmtBRL(totalInvestido)}</strong>Soma de todos os PDMs</div>
-              <div class="invest-item"><strong>${allPdms.length}</strong>PDMs (atual + histórico)</div>
+            <div class="invest-bar" style="margin-bottom:16px">
+              <div class="invest-item"><strong>R$ ${fmtBRL(totalMovimentado)}</strong>Total movimentado</div>
+              <div class="invest-item"><strong>R$ ${fmtBRL(verbaMensal)}</strong>Verba mensal atual</div>
+              <div class="invest-item"><strong>${allPdms.length}</strong>PDM(s)</div>
             </div>
-            ${allPdms.length?`<table style="width:100%"><tbody>${allPdms.map(p=>`<tr>
-              <td style="font-size:13px">${p.objetivo||'PDM sem título'}</td>
-              <td style="font-size:11px;color:var(--muted)">${fmtDateShort(p.inicio)}→${fmtDateShort(p.fim)}</td>
-              <td style="font-family:var(--font-m);font-size:13px;text-align:right">R$ ${fmtBRL(totalVerbaGrupos(p.grupos||[]))}</td>
-              <td><span class="pdm-ver-badge ${p.isCurrent===false?'badge-hist':'badge-current'}">${p.isCurrent===false?'Hist.':'Atual'}</span></td>
-            </tr>`).join('')}</tbody></table>`:'<p style="font-size:13px;color:var(--muted)">Nenhum PDM cadastrado.</p>'}
+            ${allPdms.length?`<table style="width:100%;border-collapse:collapse">
+              <thead><tr>
+                <th style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--border);text-align:left">PDM</th>
+                <th style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--border);text-align:right">Mensal</th>
+                <th style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--border);text-align:right">Movimentado</th>
+                <th style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--border);text-align:center">Status</th>
+                <th style="padding:6px 8px;border-bottom:1px solid var(--border)"></th>
+              </tr></thead>
+              <tbody>${allPdms.map(p=>{
+                const mov=calcMovimentado(p);
+                const mensal=totalVerbaGrupos(p.grupos||[]);
+                const isAtual=p.isCurrent!==false;
+                return`<tr>
+                  <td style="padding:8px;font-size:13px">
+                    <div style="font-weight:600">${p.nome||p.objetivo||'PDM sem nome'}</div>
+                    <div style="font-size:11px;color:var(--muted)">${fmtDateShort(p.inicio)} → ${fmtDateShort(p.fim)}</div>
+                  </td>
+                  <td style="padding:8px;font-family:var(--font-m);font-size:13px;text-align:right">R$ ${fmtBRL(mensal)}</td>
+                  <td style="padding:8px;font-family:var(--font-m);font-size:13px;font-weight:700;text-align:right;color:var(--success)">R$ ${fmtBRL(mov)}</td>
+                  <td style="padding:8px;text-align:center">
+                    <span class="pdm-ver-badge ${isAtual?'badge-current':'badge-hist'}">${isAtual?'Ativo':'Histórico'}</span>
+                  </td>
+                  <td style="padding:8px;text-align:right">
+                    <button class="btn btn-ghost btn-xs" onclick="editarPDM('${p.id}')">Editar</button>
+                  </td>
+                </tr>`;
+              }).join('')}</tbody>
+              <tfoot><tr>
+                <td colspan="2" style="padding:10px 8px;font-size:12px;font-weight:600;color:var(--muted);border-top:1px solid var(--border)">TOTAL</td>
+                <td style="padding:10px 8px;font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--accent);text-align:right;border-top:1px solid var(--border)">R$ ${fmtBRL(totalMovimentado)}</td>
+                <td colspan="2" style="border-top:1px solid var(--border)"></td>
+              </tfoot>
+            </table>`:'<p style="font-size:13px;color:var(--muted)">Nenhum PDM cadastrado.</p>'}
           </div>
         </div>
       </div>
 
       <div>
         <div class="card">
-          <div class="card-header"><span class="card-title">Plano de mídia</span></div>
+          <div class="card-header">
+            <span class="card-title">Plano de mídia atual</span>
+            ${pdmAtual?`<button class="btn btn-ghost btn-sm" onclick="editarPDM('${pdmAtual.id}')">Editar PDM</button>`:''}
+          </div>
           <div class="card-body">
-            ${pdm?renderPDMSummaryAccordion(pdm,id):`<div class="empty" style="padding:24px">
-              <p style="color:var(--muted)">PDM não criado.</p>
-              <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="navigate('pdm','${id}')">Criar PDM</button>
+            ${pdmAtual?renderPDMSummaryAccordion(pdmAtual,id):`<div class="empty" style="padding:24px">
+              <p style="color:var(--muted)">Nenhum PDM ativo.</p>
+              <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="navigate('pdm','${id}')">+ Criar PDM</button>
             </div>`}
           </div>
         </div>
@@ -1356,6 +1469,7 @@ function resetEditor(){
   grupoCount=0;campanhaCount=0;metaCount=0;
   document.getElementById('grupos-container').innerHTML='';
   document.getElementById('metas-container').innerHTML='';
+  const nomeEl=document.getElementById('pdm-nome');nomeEl.value='';delete nomeEl.dataset.editId;
   document.getElementById('pdm-objetivo').value='';
   document.getElementById('pdm-inicio').value='';
   document.getElementById('pdm-fim').value='';
@@ -1364,6 +1478,7 @@ function resetEditor(){
 }
 
 function loadPDM(pdm,clientId){
+  document.getElementById('pdm-nome').value=pdm.nome||'';
   document.getElementById('pdm-objetivo').value=pdm.objetivo||'';
   document.getElementById('pdm-inicio').value=pdm.inicio||'';
   document.getElementById('pdm-fim').value=pdm.fim||'';
@@ -1380,8 +1495,14 @@ function renderHistInEditor(clientId){
   if(!hist.length){wrap.style.display='none';return;}
   wrap.style.display='block';
   document.getElementById('pdm-hist-list').innerHTML=hist.map(p=>`<div class="pdm-ver-card">
-    <div class="pdm-ver-info"><strong>${p.objetivo||'PDM sem título'}</strong><span>${fmtDateShort(p.inicio)}→${fmtDateShort(p.fim)} · R$ ${fmtBRL(totalVerbaGrupos(p.grupos||[]))}</span></div>
-    <span class="pdm-ver-badge badge-hist">Histórico</span>
+    <div class="pdm-ver-info">
+      <strong>${p.nome||p.objetivo||'PDM sem título'}</strong>
+      <span>${fmtDateShort(p.inicio)}→${fmtDateShort(p.fim)} · Mensal: R$ ${fmtBRL(totalVerbaGrupos(p.grupos||[]))} · Movimentado: R$ ${fmtBRL(calcMovimentado(p))}</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="pdm-ver-badge badge-hist">Histórico</span>
+      <button class="btn btn-ghost btn-xs" onclick="editarPDM('${p.id}')">Editar</button>
+    </div>
   </div>`).join('');
 }
 
@@ -1521,14 +1642,25 @@ function collectPDM(){
     const ins=row.querySelectorAll('input');const sel=row.querySelector('select');
     metas.push({canal:ins[0].value,metrica:sel.value,valor:ins[1].value});
   });
-  return{clientId,objetivo:document.getElementById('pdm-objetivo').value,inicio:document.getElementById('pdm-inicio').value,fim:document.getElementById('pdm-fim').value,grupos,metas};
+  const nome=document.getElementById('pdm-nome').value.trim();
+  if(!nome){toast('Dê um nome ao PDM para identificar.','error');return null;}
+  const editId=document.getElementById('pdm-nome').dataset.editId||null;
+  return{id:editId||undefined,clientId,nome,objetivo:document.getElementById('pdm-objetivo').value,inicio:document.getElementById('pdm-inicio').value,fim:document.getElementById('pdm-fim').value,grupos,metas};
 }
 
 function savePDM(silent){
   const data=collectPDM();if(!data)return null;
-  const db=DB.get();const idx=db.pdms.findIndex(p=>p.clientId===data.clientId&&p.isCurrent!==false);
-  if(idx>=0){data.link=db.pdms[idx].link||null;data.isCurrent=true;db.pdms[idx]={...db.pdms[idx],...data};}
-  else{data.id=uid();data.isCurrent=true;db.pdms.push(data);}
+  const db=DB.get();
+  // Se já existe PDM com mesmo id (edição), atualiza. Senão, cria novo.
+  if(data.id){
+    const idx=db.pdms.findIndex(p=>p.id===data.id);
+    if(idx>=0){db.pdms[idx]={...db.pdms[idx],...data};DB.persist();if(!silent)toast('PDM atualizado!','success');return data;}
+  }
+  // Novo PDM — marcar anterior do mesmo cliente como histórico se existir
+  // NÃO deleta, apenas marca isCurrent=false
+  db.pdms.forEach(p=>{if(p.clientId===data.clientId&&p.isCurrent!==false)p.isCurrent=false;});
+  data.id=uid();data.isCurrent=true;data.criadoEm=new Date().toISOString();
+  db.pdms.push(data);
   DB.persist();if(!silent)toast('PDM salvo!','success');return data;
 }
 
@@ -1559,7 +1691,8 @@ function doDuplicate(pdmId){
   sel.innerHTML='<option value="">— selecione —</option>'+db.clients.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
   sel.value=pdm.clientId;
   resetEditor();
-  document.getElementById('pdm-objetivo').value=(pdm.objetivo||'')+(pdm.isCurrent!==false?' (cópia)':'');
+  document.getElementById('pdm-nome').value=(pdm.nome||pdm.objetivo||'PDM')+' (cópia)';
+  document.getElementById('pdm-objetivo').value=pdm.objetivo||'';
   document.getElementById('pdm-inicio').value='';
   document.getElementById('pdm-fim').value='';
   (pdm.grupos||[]).forEach(g=>addGrupo(JSON.parse(JSON.stringify(g))));
@@ -1643,6 +1776,50 @@ document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{
 // ═══════════════════════════════════════════════════
 // UTILS
 // ═══════════════════════════════════════════════════
+// ─── CÁLCULO DE VALOR MOVIMENTADO ───
+// Verba mensal × meses decorridos desde início até hoje (ou até fim se encerrado)
+function calcMovimentado(pdm){
+  if(!pdm.inicio)return totalVerbaGrupos(pdm.grupos||[]);
+  const inicio=new Date(pdm.inicio+'T12:00:00');
+  const hoje=new Date();hoje.setHours(12,0,0,0);
+  const fimPDM=pdm.fim?new Date(pdm.fim+'T12:00:00'):null;
+  // data de corte: menor entre hoje e fim do PDM
+  const corte=fimPDM&&fimPDM<hoje?fimPDM:hoje;
+  if(corte<inicio)return 0;
+  // meses completos decorridos (incluindo o mês de início)
+  const meses=Math.max(1,(corte.getFullYear()-inicio.getFullYear())*12+(corte.getMonth()-inicio.getMonth())+1);
+  const mensal=totalVerbaGrupos(pdm.grupos||[]);
+  return mensal*meses;
+}
+
+// soma movimentado de todos os PDMs de um cliente
+function totalMovimentadoCliente(clientId){
+  const db=DB.get();
+  return db.pdms.filter(p=>p.clientId===clientId).reduce((s,p)=>s+calcMovimentado(p),0);
+}
+
+// soma movimentado global (todos os clientes, todos os PDMs)
+function totalMovimentadoGlobal(){
+  const db=DB.get();
+  return db.pdms.reduce((s,p)=>s+calcMovimentado(p),0);
+}
+
+// editar PDM histórico ou atual pelo id
+function editarPDM(pdmId){
+  const db=DB.get();const pdm=db.pdms.find(p=>p.id===pdmId);if(!pdm)return;
+  const sel=document.getElementById('pdm-cliente');
+  if(!sel)return navigate('pdm',pdm.clientId);
+  // carregar no editor
+  sel.innerHTML='<option value="">— selecione —</option>'+db.clients.map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
+  sel.value=pdm.clientId;
+  resetEditor();
+  loadPDM(pdm,pdm.clientId);
+  // guardar id no campo oculto para savePDM saber que é edição
+  document.getElementById('pdm-nome').dataset.editId=pdm.id;
+  navigate('pdm');
+  toast('PDM carregado para edição.','info');
+}
+
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function initials(n){return n.trim().split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();}
 function cap(s){return s?s[0].toUpperCase()+s.slice(1):'';}
@@ -2098,6 +2275,117 @@ function instalarPWA(){
   if(!deferredPrompt)return;
   deferredPrompt.prompt();
   deferredPrompt.userChoice.then(()=>{deferredPrompt=null;});
+}
+
+
+// ═══════════════════════════════════════════════════
+// MODAL EDIÇÃO INLINE DO CLIENTE
+// ═══════════════════════════════════════════════════
+let modalEditFile = null;
+
+function abrirModalEdicaoCliente(id){
+  const db = DB.get();
+  const c = db.clients.find(x => x.id === id);
+  if(!c) return;
+
+  document.getElementById('medit-id').value = c.id;
+  document.getElementById('medit-nome').value = c.nome || '';
+  document.getElementById('medit-nicho').value = c.nicho || '';
+  document.getElementById('medit-resp').value = c.responsavel || '';
+  document.getElementById('medit-wa').value = c.whatsapp || '';
+  document.getElementById('medit-email').value = c.email || '';
+  document.getElementById('medit-status').value = c.status || 'ativo';
+  document.getElementById('medit-obs').value = c.obs || '';
+  document.getElementById('medit-honorario').value = c.honorario || '';
+  document.getElementById('medit-dia-pgto').value = c.diaPgto || '';
+  document.getElementById('medit-meses').value = c.mesesContrato || '';
+  document.getElementById('medit-inicio-contrato').value = c.inicioContrato || '';
+  document.getElementById('medit-obs-fin').value = c.obsFin || '';
+  modalEditFile = null;
+  document.getElementById('medit-file-input').value = '';
+
+  // área do briefing
+  const ba = document.getElementById('medit-briefing-area');
+  if(c.briefingName){
+    ba.innerHTML = `<div class="pdf-item" style="margin-bottom:8px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      <span class="pdf-item-name">${c.briefingName}</span>
+      <span class="pdf-item-size">atual</span>
+      <button class="btn btn-ghost btn-xs" onclick="downloadBriefing('${c.id}')">Baixar</button>
+      <button class="btn btn-ghost btn-xs" onclick="document.getElementById('medit-file-input').click()">Substituir</button>
+    </div>
+    <div id="medit-new-file-preview"></div>`;
+  } else {
+    ba.innerHTML = `<div class="upload-zone" onclick="document.getElementById('medit-file-input').click()" style="padding:20px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:24px;height:24px;margin-bottom:8px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <p style="font-size:13px;color:var(--muted)"><strong>Clique para adicionar</strong> o PDF do briefing</p>
+    </div>
+    <div id="medit-new-file-preview"></div>`;
+  }
+
+  document.getElementById('modal-editar-cliente').classList.remove('hidden');
+}
+
+function handleModalBriefing(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.type !== 'application/pdf'){ toast('Selecione apenas PDF.','error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    file._data = e.target.result;
+    modalEditFile = file;
+    const prev = document.getElementById('medit-new-file-preview');
+    if(prev) prev.innerHTML = `<div class="pdf-item" style="margin-top:8px;border-color:var(--success)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+      <span class="pdf-item-name" style="font-size:12px">${file.name} — novo</span>
+      <span class="pdf-item-size">${(file.size/1024).toFixed(0)} KB</span>
+    </div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function salvarEdicaoCliente(){
+  const id = document.getElementById('medit-id').value;
+  const nome = document.getElementById('medit-nome').value.trim();
+  const nicho = document.getElementById('medit-nicho').value.trim();
+  if(!nome || !nicho){ toast('Preencha nome e nicho.','error'); return; }
+
+  const db = DB.get();
+  const idx = db.clients.findIndex(c => c.id === id);
+  if(idx < 0){ toast('Cliente não encontrado.','error'); return; }
+  const old = db.clients[idx];
+
+  // briefing com backup
+  let briefingName = old.briefingName;
+  let briefingData = old.briefingData;
+  let briefingBackups = old.briefingBackups || [];
+  if(modalEditFile){
+    if(old.briefingName && old.briefingData){
+      briefingBackups = [{name:old.briefingName, data:old.briefingData, date:new Date().toLocaleDateString('pt-BR')}, ...briefingBackups].slice(0,5);
+    }
+    briefingName = modalEditFile.name;
+    briefingData = modalEditFile._data;
+  }
+
+  db.clients[idx] = {
+    ...old, nome, nicho,
+    responsavel: document.getElementById('medit-resp').value.trim(),
+    whatsapp: document.getElementById('medit-wa').value.trim(),
+    email: document.getElementById('medit-email').value.trim(),
+    status: document.getElementById('medit-status').value,
+    obs: document.getElementById('medit-obs').value.trim(),
+    honorario: parseFloat(document.getElementById('medit-honorario').value) || 0,
+    diaPgto: parseInt(document.getElementById('medit-dia-pgto').value) || null,
+    mesesContrato: parseInt(document.getElementById('medit-meses').value) || null,
+    inicioContrato: document.getElementById('medit-inicio-contrato').value || null,
+    obsFin: document.getElementById('medit-obs-fin').value.trim(),
+    briefingName, briefingData, briefingBackups,
+  };
+  DB.persist();
+  closeModal('modal-editar-cliente');
+  toast('Cliente atualizado!','success');
+  // Re-renderizar detalhe
+  renderDetalhe(id);
 }
 
 // ── INIT ──
